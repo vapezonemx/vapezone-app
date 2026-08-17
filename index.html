@@ -779,7 +779,9 @@ async function cargarProductosDesdeSupabase(){
         stock: p.stock_disponible ? 1 : 0,
         tiers_precio: p.tiers_precio || null,
         bogo_cantidad: p.bogo_cantidad || null,
-        bogo_minimo_pedido: p.bogo_minimo_pedido || null
+        bogo_minimo_pedido: p.bogo_minimo_pedido || null,
+        sabores: p.sabores || null,
+        sabores_label: p.sabores_label || null
       };
     });
 
@@ -787,8 +789,8 @@ async function cargarProductosDesdeSupabase(){
     console.log('Productos cargados desde Supabase:', P.length);
     // Diagnostico temporal: cuantos productos SI encontraron su sabor
     // y cuales NO -- para confirmar si el mapeo nombre->sku esta funcionando.
-    var conSabor = P.filter(function(p){ return FLAVORS[p.sku] && FLAVORS[p.sku].options && FLAVORS[p.sku].options.length; });
-    var sinSabor = P.filter(function(p){ return !(FLAVORS[p.sku] && FLAVORS[p.sku].options && FLAVORS[p.sku].options.length); });
+    var conSabor = P.filter(function(p){ var fi = flavorsDe(p); return fi && fi.options && fi.options.length; });
+    var sinSabor = P.filter(function(p){ var fi = flavorsDe(p); return !(fi && fi.options && fi.options.length); });
     console.log('Productos CON sabor detectado:', conSabor.length);
     console.log('Productos SIN sabor detectado:', sinSabor.length);
     console.log('Nombres sin sabor:', sinSabor.map(function(p){ return p.name; }));
@@ -1032,15 +1034,27 @@ function updateHomeVisibility(){
   if(grid) grid.style.display = isHome ? 'none' : '';
 }
 
+// Devuelve {label, options} de sabores para un producto, priorizando
+// los datos reales que vienen de Supabase (p.sabores / p.sabores_label)
+// y usando el diccionario fijo FLAVORS solo como respaldo mientras se
+// termina de migrar todo el catalogo.
+function flavorsDe(p){
+  if(p && p.sabores && p.sabores.length){
+    return { label: p.sabores_label || 'Sabor', options: p.sabores };
+  }
+  return FLAVORS[p.sku] || null;
+}
+
 function cardHtml(p){
   var img=p.image?'<img class="cimg" src="'+p.image+'" alt="" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">':'';
   var ph='<div class="cph" style="'+(p.image?'display:none':'')+'">&#128168;</div>';
   var rib=p.ribbon?'<div class="crib">'+p.ribbon+'</div>':'';
   var comp=p.compare_price?'<span class="ccomp">$'+p.compare_price.toFixed(0)+'</span>':'';
   var outOfStock = p.tracked && p.stock!==null && p.stock<=0;
-  var hasFlavor = FLAVORS[p.sku] && FLAVORS[p.sku].options && FLAVORS[p.sku].options.length;
+  var flvInfo = flavorsDe(p);
+  var hasFlavor = flvInfo && flvInfo.options && flvInfo.options.length;
   var addBtn = outOfStock ? '<div class="cadd cout">Agotado</div>' :
-    hasFlavor ? '<div class="cqrow" onclick="event.stopPropagation()"><button class="cadd" onclick="openMo(\''+p.id+'\')">Elegir '+FLAVORS[p.sku].label.toLowerCase()+'</button></div>' :
+    hasFlavor ? '<div class="cqrow" onclick="event.stopPropagation()"><button class="cadd" onclick="openMo(\''+p.id+'\')">Elegir '+flvInfo.label.toLowerCase()+'</button></div>' :
     '<div class="cqrow" onclick="event.stopPropagation()">'+
       '<button class="cqb" onclick="bumpQty(\''+p.id+'\',-1,event)">-</button>'+
       '<span class="cqv" id="qsel_'+p.id+'">'+getQty(p.id)+'</span>'+
@@ -1119,7 +1133,7 @@ var modalQty = 1;
 var selectedFlavor = null;
 function renderFlavorPicker(p){
   var box = document.getElementById('mflavor');
-  var f = FLAVORS[p.sku];
+  var f = flavorsDe(p);
   if(!f || !f.options || !f.options.length){
     box.className = 'mflavor empty';
     box.innerHTML = '';
@@ -1142,7 +1156,7 @@ function bumpModalQty(d){
 }
 function addCartFromModal(){
   if(!cur) return;
-  var f = FLAVORS[cur.sku];
+  var f = flavorsDe(cur);
   if(f && f.options && f.options.length && !selectedFlavor){
     toast('Elige un '+f.label.toLowerCase()+' antes de agregar');
     return;
