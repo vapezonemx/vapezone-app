@@ -378,13 +378,13 @@ select.cname-input{appearance:none;-webkit-appearance:none;background-image:url(
   <div class="pnbox">
     <div class="pnicon">&#128196;</div>
     <div class="pntitle">Tu pedido esta listo</div>
-    <div class="pntext">Primero descarga la imagen con el resumen de tu pedido (o toma captura de pantalla), y despues envíala en el chat de WhatsApp que se va a abrir.</div>
+    <div class="pntext">Primero descarga la imagen con el resumen de tu pedido, y despues envíala en el chat de WhatsApp que se va a abrir.</div>
     <img id="pnImgPreview" src="" alt="Resumen del pedido" style="width:100%;border-radius:12px;border:1px solid var(--border);margin:12px 0;">
-    <button class="pnbtn" onclick="downloadOrderImage()" style="background:var(--text);color:#ffffff;">1. Descargar pedido</button>
-    <button class="pnbtn" onclick="continueToWhatsapp()" style="background:var(--green);color:#ffffff;margin-top:10px;">2. Abrir WhatsApp</button>
+    <button class="pnbtn" onclick="downloadOrderImage()" style="background:var(--text);">1. Descargar imagen del pedido</button>
+    <button class="pnbtn" onclick="continueToWhatsapp()" style="background:var(--green);margin-top:10px;">2. Abrir WhatsApp</button>
   </div>
 </div>
-<div id="cv"><div class="chdr"><button class="bk" onclick="closeCart()">&#8592;</button><span class="ctit">Mi carrito</span></div><div class="clist" id="cl"></div><div id="cname-wrap" class="cname-wrap"><input id="cname" class="cname-input" type="text" placeholder="Tu nombre (para el pedido)" autocomplete="name"></div><div id="cphone-wrap" class="cname-wrap"><input id="cphone" class="cname-input" type="tel" placeholder="Tu numero de celular (10 digitos)" autocomplete="tel" inputmode="numeric" maxlength="10"></div><div id="ship-wrap" class="cname-wrap"><div class="cfield-label">Tipo de entrega</div><div class="shipopts"><button type="button" class="shipopt" id="ship-tienda" onclick="selectShipping('tienda')">Recoger en tienda</button><button type="button" class="shipopt" id="ship-domicilio" onclick="selectShipping('domicilio')">Envio a domicilio</button></div><div id="address-fields" style="display:none;"><input id="addr-cp" class="cname-input addr-input" type="text" placeholder="Codigo postal" inputmode="numeric"><input id="addr-calle" class="cname-input addr-input" type="text" placeholder="Calle"><input id="addr-numero" class="cname-input addr-input" type="text" placeholder="Numero"><input id="addr-colonia" class="cname-input addr-input" type="text" placeholder="Colonia"><input id="addr-ciudad" class="cname-input addr-input" type="text" placeholder="Ciudad"><input id="addr-estado" class="cname-input addr-input" type="text" placeholder="Estado"></div></div><div id="vendor-wrap" class="cname-wrap"><div class="cfield-label">Selecciona tu vendedor</div><select id="vendedor" class="cname-input"><option value="">Selecciona...</option><option value="Brandon">Brandon</option><option value="Bryan">Bryan</option><option value="Patricio">Patricio</option><option value="Christian">Christian</option><option value="Israel">Israel</option><option value="Manuel">Manuel</option><option value="Juan">Juan</option><option value="Gio">Gio</option><option value="Dessyré">Dessyré</option><option value="Diego">Diego</option><option value="Emir">Emir</option><option value="Oralia Sánchez">Oralia Sánchez</option><option value="Rodrigo">Rodrigo</option><option value="Ramiro">Ramiro</option><option value="Samy">Samy</option><option value="Armando Leza">Armando Leza</option><option value="NINGUNO">No tengo vendedor</option></select></div><div id="cf"></div></div>
+<div id="cv"><div class="chdr"><button class="bk" onclick="closeCart()">&#8592;</button><span class="ctit">Mi carrito</span></div><div class="clist" id="cl"></div><div id="cname-wrap" class="cname-wrap"><input id="cname" class="cname-input" type="text" placeholder="Tu nombre (para el pedido)" autocomplete="name"></div><div id="cphone-wrap" class="cname-wrap"><input id="cphone" class="cname-input" type="tel" placeholder="Tu numero de celular (10 digitos)" autocomplete="tel" inputmode="numeric" maxlength="10"></div><div id="ship-wrap" class="cname-wrap"><div class="cfield-label">Tipo de entrega</div><div class="shipopts"><button type="button" class="shipopt" id="ship-tienda" onclick="selectShipping('tienda')">Recoger en tienda</button><button type="button" class="shipopt" id="ship-domicilio" onclick="selectShipping('domicilio')">Envio a domicilio</button></div><div id="address-fields" style="display:none;"><input id="addr-cp" class="cname-input addr-input" type="text" placeholder="Codigo postal" inputmode="numeric"><input id="addr-calle" class="cname-input addr-input" type="text" placeholder="Calle"><input id="addr-numero" class="cname-input addr-input" type="text" placeholder="Numero"><input id="addr-colonia" class="cname-input addr-input" type="text" placeholder="Colonia"><input id="addr-ciudad" class="cname-input addr-input" type="text" placeholder="Ciudad"><input id="addr-estado" class="cname-input addr-input" type="text" placeholder="Estado"></div></div><div id="vendor-wrap" class="cname-wrap"><div class="cfield-label">Selecciona tu vendedor</div><select id="vendedor" class="cname-input"><option value="">Selecciona...</option><option value="Brandon">Brandon</option><option value="Bryan">Bryan</option><option value="Patricio">Patricio</option><option value="Christian">Christian</option><option value="Israel">Israel</option><option value="Manuel">Manuel</option><option value="Juan">Juan</option><option value="Gio">Gio</option><option value="NINGUNO">No tengo vendedor</option></select></div><div id="cf"></div></div>
 <div id="kv" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:150;flex-direction:column;overflow-y:auto;padding-bottom:80px;">
   <div class="khdr" style="padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;"><button class="bk" onclick="closeContact()">&#8592;</button><span class="ctit">Informacion</span></div>
   <div class="kb" style="padding:20px;">
@@ -1443,24 +1443,17 @@ function generateOrderImage(numeroPedido, cliente, telefono, fecha, hora, rows, 
   return canvas.toDataURL('image/png');
 }
 
-// Numero de WhatsApp por vendedor (formato: 52 + 1 + 10 digitos, sin espacios ni signos).
+// Numero de WhatsApp por vendedor -- PENDIENTE: pega aqui el numero real de cada uno
+// (formato igual que arriba, ej. "5281XXXXXXXX", sin espacios ni signos).
 var VENDEDORES = {
-  'Brandon': '5218112766080',
-  'Bryan': '5218111235070',
-  'Patricio': '5218116274372',
-  'Christian': '5218110654044',
-  'Israel': '5218115559419',
-  'Manuel': '5218131733778',
-  'Juan': '5218125610824',
-  'Gio': '5215561492426',
-  'Dessyré': '5218129702202',
-  'Diego': '5218124418883',
-  'Emir': '5218126976256',
-  'Oralia Sánchez': '5218129232749',
-  'Rodrigo': '5218181803777',
-  'Ramiro': '5218127568583',
-  'Samy': '5218120354866',
-  'Armando Leza': '5218118994276'
+  'Brandon': '',
+  'Bryan': '',
+  'Patricio': '',
+  'Christian': '',
+  'Israel': '',
+  'Manuel': '',
+  'Juan': '',
+  'Gio': ''
 };
 
 var selectedShipping = null;
