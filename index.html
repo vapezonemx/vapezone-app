@@ -122,6 +122,9 @@ nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.97);bord
 .fdot{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
 .flavor-row.on .fdot{border-color:#111;}
 .flavor-row.on .fdot::after{content:'';width:10px;height:10px;border-radius:50%;background:#111;}
+.flavor-row.flavor-out{cursor:not-allowed;opacity:0.45;}
+.ftag-out{font-size:11px;font-weight:700;color:#c0392b;background:#fbeae8;border-radius:8px;padding:2px 8px;margin-right:6px;}
+.tierpill-orig{opacity:0.7;margin-right:2px;font-weight:500;}
 .cflavor{font-size:11.5px;color:var(--muted);margin-top:2px;}
 #pdfNotice{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;align-items:center;justify-content:center;padding:20px;}
 #pdfNotice.open{display:flex;}
@@ -378,10 +381,18 @@ select.cname-input{appearance:none;-webkit-appearance:none;background-image:url(
   <div class="pnbox">
     <div class="pnicon">&#128196;</div>
     <div class="pntitle">Tu pedido esta listo</div>
-    <div class="pntext">Primero descarga la imagen con el resumen de tu pedido (o toma captura de pantalla), y despues envíala en el chat de WhatsApp que se va a abrir.</div>
+    <div class="pntext">Para completar tu pedido y que quede registrado, sigue estos 2 pasos:</div>
     <img id="pnImgPreview" src="" alt="Resumen del pedido" style="width:100%;border-radius:12px;border:1px solid var(--border);margin:12px 0;">
-    <button class="pnbtn" onclick="downloadOrderImage()" style="background:var(--text);color:#ffffff;">1. Descargar pedido</button>
-    <button class="pnbtn" onclick="continueToWhatsapp()" style="background:var(--green);color:#ffffff;margin-top:10px;">2. Abrir WhatsApp</button>
+    <button class="pnbtn" onclick="downloadOrderImage()" style="background:var(--text);color:#ffffff;">1. Descarga la imagen del pedido (se guarda en tus fotos)</button>
+    <button class="pnbtn" onclick="continueToWhatsapp()" style="background:var(--green);color:#ffffff;margin-top:10px;">2. Da clic aqui para hacer tu pedido por WhatsApp</button>
+  </div>
+</div>
+<div id="waConfirmNotice" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:310;align-items:center;justify-content:center;padding:20px;">
+  <div class="pnbox">
+    <div class="pnicon">&#9989;</div>
+    <div class="pntitle">Listo, hemos recibido tu pedido</div>
+    <div class="pntext">No olvides darle <b>Enviar</b> en WhatsApp (junto con la imagen del pedido) para que te atendamos lo mas pronto posible.</div>
+    <button class="pnbtn" onclick="closeWaConfirmNotice()" style="background:var(--text);color:#ffffff;margin-top:10px;">Entendido</button>
   </div>
 </div>
 <div id="cv"><div class="chdr"><button class="bk" onclick="closeCart()">&#8592;</button><span class="ctit">Mi carrito</span></div><div class="clist" id="cl"></div><div id="cname-wrap" class="cname-wrap"><input id="cname" class="cname-input" type="text" placeholder="Tu nombre (para el pedido)" autocomplete="name"></div><div id="cphone-wrap" class="cname-wrap"><input id="cphone" class="cname-input" type="tel" placeholder="Tu numero de celular (10 digitos)" autocomplete="tel" inputmode="numeric" maxlength="10"></div><div id="ship-wrap" class="cname-wrap"><div class="cfield-label">Tipo de entrega</div><div class="shipopts"><button type="button" class="shipopt" id="ship-tienda" onclick="selectShipping('tienda')">Recoger en tienda</button><button type="button" class="shipopt" id="ship-domicilio" onclick="selectShipping('domicilio')">Envio a domicilio</button></div><div id="address-fields" style="display:none;"><input id="addr-cp" class="cname-input addr-input" type="text" placeholder="Codigo postal" inputmode="numeric"><input id="addr-calle" class="cname-input addr-input" type="text" placeholder="Calle"><input id="addr-numero" class="cname-input addr-input" type="text" placeholder="Numero"><input id="addr-colonia" class="cname-input addr-input" type="text" placeholder="Colonia"><input id="addr-ciudad" class="cname-input addr-input" type="text" placeholder="Ciudad"><input id="addr-estado" class="cname-input addr-input" type="text" placeholder="Estado"></div></div><div id="vendor-wrap" class="cname-wrap"><div class="cfield-label">Selecciona tu vendedor</div><select id="vendedor" class="cname-input"><option value="">Selecciona...</option><option value="Brandon">Brandon</option><option value="Bryan">Bryan</option><option value="Patricio">Patricio</option><option value="Christian">Christian</option><option value="Israel">Israel</option><option value="Manuel">Manuel</option><option value="Juan">Juan</option><option value="Gio">Gio</option><option value="Dessyré">Dessyré</option><option value="Diego">Diego</option><option value="Emir">Emir</option><option value="Oralia Sánchez">Oralia Sánchez</option><option value="Rodrigo">Rodrigo</option><option value="Ramiro">Ramiro</option><option value="Samy">Samy</option><option value="Armando Leza">Armando Leza</option><option value="NINGUNO">No tengo vendedor</option></select></div><div id="cf"></div></div>
@@ -670,7 +681,7 @@ function genOrderNumber(){
 }
 let PRICE_TABLE = {
   "IplayMax": { tiers: [[1,9,220],[10,300,125]], bogo: 2, bogoMin: 10 },
-  "IPBOXM": { tiers: [[1,9,350],[10,49,190],[50,149,185],[150,300,180]], bogo: null, bogoMin: null },
+  "IPBOXM": { tiers: [[1,9,297],[10,49,161],[50,149,157],[150,300,153]], tiersOriginal: [[1,9,350],[10,49,190],[50,149,185],[150,300,180]], bogo: null, bogoMin: null },
   "XBOX NP": { tiers: [[1,9,250],[10,300,150]], bogo: 2, bogoMin: 10 },
   "00329": { tiers: [[1,9,250],[10,300,190]], bogo: 2, bogoMin: 10 },
   "SLURP": { tiers: [[1,9,200],[10,1000,135]], bogo: 3, bogoMin: 10 },
@@ -684,9 +695,9 @@ let PRICE_TABLE = {
   "BOYS": { tiers: [[1,9,200],[10,300,150]], bogo: 2, bogoMin: 10 },
   "GEEK BAR X": { tiers: [[1,9,350],[10,49,240],[50,149,235],[150,300,230]], bogo: null, bogoMin: null },
   "PULSE": { tiers: [[1,9,320],[10,49,210],[50,149,205],[150,300,200]], bogo: null, bogoMin: null },
-  "NOVAB": { tiers: [[1,9,340],[10,49,170],[50,149,165],[150,300,161]], bogo: null, bogoMin: null },
-  "NEXPI": { tiers: [[1,9,340],[10,49,195],[50,149,191],[150,300,187]], bogo: null, bogoMin: null },
-  "FASTA 35K": { tiers: [[1,9,315],[10,49,207],[50,149,202],[150,300,198]], bogo: null, bogoMin: null },
+  "NOVAB": { tiers: [[1,9,340],[10,49,170],[50,149,165],[150,300,161]], tiersOriginal: [[1,9,400],[10,49,200],[50,149,195],[150,300,190]], bogo: null, bogoMin: null },
+  "NEXPI": { tiers: [[1,9,340],[10,49,195],[50,149,191],[150,300,187]], tiersOriginal: [[1,9,400],[10,49,230],[50,149,225],[150,300,220]], bogo: null, bogoMin: null },
+  "FASTA 35K": { tiers: [[1,9,315],[10,49,207],[50,149,202],[150,300,198]], tiersOriginal: [[1,9,350],[10,49,230],[50,149,225],[150,300,220]], bogo: null, bogoMin: null },
   "TOMO": { tiers: [[1,9,400],[10,49,240],[50,149,235],[150,300,230]], bogo: null, bogoMin: null },
   "INSTA8": { tiers: [[1,9,450],[10,49,270],[50,149,265],[150,300,260]], bogo: null, bogoMin: null },
   "VOOMMET": { tiers: [[1,9,400],[10,49,270],[50,149,265],[150,300,260]], bogo: null, bogoMin: null },
@@ -712,7 +723,7 @@ let PRICE_TABLE = {
   "SPMX": { tiers: [[1,9,145],[10,300,145]], bogo: 2, bogoMin: 10 },
   "SPRO": { tiers: [[1,9,145],[10,300,145]], bogo: 2, bogoMin: 10 },
   "EASE": { tiers: [[1,9,150],[10,300,150]], bogo: 2, bogoMin: 10 },
-  "NIKOT": { tiers: [[1,9,200],[10,49,115],[50,149,110],[150,300,105]], bogo: null, bogoMin: null },
+  "NIKOT": { tiers: [[1,9,160],[10,49,160],[50,149,110],[150,300,105]], bogo: 2, bogoMin: 1 },
 };
 var NOMBRE_A_SKU={"ASVAPE AIRPUFF 8K HITS": "ASVAPEAIRPUFF", "BAPE-Vape 10K": "BAP", "BIG PENIS 15G X 12 PACKS": "00344", "BILLIONAIRE BOYS": "BOYS", "BLACK HORSE 24pz X 10 gr": "BLACKHO", "BLACK TIGER 10G X 24 PACKS": "5541098221519", "DOSE VITAL HONEY 15G X 12 PACKS": "2156057190763", "DRAGBAR 3K": "DRAGBAR3", "DRAGBAR 6.5K": "DRAGBAR6", "ETUBAX 10G X 24 PACKS": "00348", "FASTA 35000": "FASTA 35K", "FLAWLSS 9K": "FLAWLSS", "GEEK BAR PULSE 15000 PUFFS": "PULSE", "GEEK BAR PULSE X 25k": "GEEK BAR X", "GOLD FLY 12G X 12 PACKS": "834656521578", "HARD STEEL HONEY 12G X 12 PACKS": "823325345669", "HEYLO 800 HITS": "HEYLO", "HYPPE MAX AIR 5K": "HYPPE", "IJOY CAPTAIN 10K": "IJOYCAP", "INSTABAR 80K": "INSTA8", "IPLAY BANG NUEVA PRESENTACIÓN 6000 HITS": "IPLAY BANG NUEVA", "IPLAY BIG MAX": "00329", "IPLAY ECCO": "IPLAY ECCO", "IPLAY GHOST": "GHOST", "IPLAY MAX": "IplayMax", "IPLAY SLURP": "SLURP", "IPLAY ULIX": "ULIX", "IPLAY VIBAR": "VIBAR", "IPLAY WALKER": "WALKER", "IPLAY XBOX EDICIÓN MUNDIAL": "IPBOXM", "IPLAY XBOX NUEVA PRESENTACIÓN": "XBOX NP", "IPLAY XBOX PRO 15000 HITS": "XBOX PRO", "JAGUAR POWER 15G X 12 PACKS": "00339", "J.R. HONEY BLACK RABBIT 12G X 12 PACKS": "94922843326", "KANGAROO 15G X 12 PACKS": "00345", "LANAVAPE AIRSHIP 10K": "LANA", "MEGA GOLD SWAG 12G X 12 PACKS": "00343", "MUEKK 2.5K": "MUEK2500", "MUEKK MODEL X": "MUEK15000", "NEXA PIX 35K": "NEXPI", "NIKOT": "NIKOT", "NORTH 5K": "NOR5", "NOVA BAR 35K": "NOVAB", "ORGANIC HONEY 10G X 24 PACKS": "5285002251628", "PACKSPOD 5K": "PACKS", "POD MESH 5.5K": "PODM", "PREMIUM SWAG 12G X 12 PACKS": "601574546163", "ROYAL HONEY 12pz x 20gr": "royalho", "ROYAL HONEY AGM 10G X 12 PACKS": "00340", "ROYAL KING HONEY 10G X 24 PACKS": "5285002251291", "SKWZD 3K": "SKWZD", "SNOWWOLF EASE 8K": "EASE", "SPACE MAX SUB-OHM 4K": "SPMX", "SPACE PRO MESH COIL 4.5K": "SPRO", "Supreme Vape 6k": "SUP", "THERMA HONEY 12G X 12 PACKS": "8697446214102", "THRP A3HH 20G X 12 PACKS": "00347", "TOMORO D20 50K": "TOMO", "VFLY 25000": "FLY", "VFLY ZERO CLOUD 50K": "VFLYC", "VIP DESTRUCTIVE POWER 20G X 12 PACKS": "00342", "VITAL HONEY VIP 10G X 24 PACKS": "00341", "VITAL HONEY VIP 15G X 24 PACKS": "00338", "VOOM METEOR 70K": "VOOMMET", "WENICK 20G X 12 PACKS": "00346", "WONDER G8": "G8", "WONDER NEO 9000": "NEO", "XMAX SHOT 20G X 10 PACKS": "5285002251451"};
 
@@ -778,10 +789,13 @@ async function cargarProductosDesdeSupabase(){
         tracked: false,
         stock: p.stock_disponible ? 1 : 0,
         tiers_precio: p.tiers_precio || null,
+        tiers_precio_original: p.tiers_precio_original || null,
         bogo_cantidad: p.bogo_cantidad || null,
         bogo_minimo_pedido: p.bogo_minimo_pedido || null,
         sabores: p.sabores || null,
-        sabores_label: p.sabores_label || null
+        sabores_label: p.sabores_label || null,
+        sabores_agotados: p.sabores_agotados || [],
+        agotado_manual: p.agotado_manual === true
       };
     });
 
@@ -1050,10 +1064,12 @@ function cardHtml(p){
   var ph='<div class="cph" style="'+(p.image?'display:none':'')+'">&#128168;</div>';
   var rib=p.ribbon?'<div class="crib">'+p.ribbon+'</div>':'';
   var comp=p.compare_price?'<span class="ccomp">$'+p.compare_price.toFixed(0)+'</span>':'';
-  var outOfStock = p.tracked && p.stock!==null && p.stock<=0;
+  var sinPrecio = (p.price===null || p.price===undefined || p.price===0);
+  var outOfStock = (p.tracked && p.stock!==null && p.stock<=0) || p.agotado_manual===true;
   var flvInfo = flavorsDe(p);
   var hasFlavor = flvInfo && flvInfo.options && flvInfo.options.length;
-  var addBtn = outOfStock ? '<div class="cadd cout">Agotado</div>' :
+  var addBtn = sinPrecio ? '<div class="cadd cout">Proximamente</div>' :
+    outOfStock ? '<div class="cadd cout">Agotado</div>' :
     hasFlavor ? '<div class="cqrow" onclick="event.stopPropagation()"><button class="cadd" onclick="openMo(\''+p.id+'\')">Elegir '+flvInfo.label.toLowerCase()+'</button></div>' :
     '<div class="cqrow" onclick="event.stopPropagation()">'+
       '<button class="cqb" onclick="bumpQty(\''+p.id+'\',-1,event)">-</button>'+
@@ -1061,7 +1077,8 @@ function cardHtml(p){
       '<button class="cqb" onclick="bumpQty(\''+p.id+'\',1,event)">+</button>'+
       '<button class="cadd" onclick="addCartFromCard(\''+p.id+'\',event)">Agregar</button>'+
     '</div>';
-  return '<div class="card'+(outOfStock?' coutcard':'')+'" onclick="'+(outOfStock?'':'openMo(\''+p.id+'\')')+'">'+img+ph+'<div class="cbody">'+rib+'<div class="cname">'+p.name+'</div><div class="cprow"><span class="cprice">$'+p.price.toFixed(0)+'</span>'+comp+'</div>'+addBtn+'</div></div>';
+  var precioTxt = sinPrecio ? '<span class="cprice">Proximamente</span>' : '<span class="cprice">$'+p.price.toFixed(0)+'</span>';
+  return '<div class="card'+((outOfStock||sinPrecio)?' coutcard':'')+'" onclick="'+((outOfStock||sinPrecio)?'':'openMo(\''+p.id+'\')')+'">'+img+ph+'<div class="cbody">'+rib+'<div class="cname">'+p.name+'</div><div class="cprow">'+precioTxt+comp+'</div>'+addBtn+'</div></div>';
 }
 
 function render(){
@@ -1101,7 +1118,7 @@ function openMo(id){
   mi.style.display=p.image?'block':'none';
   document.getElementById('mr').textContent=p.ribbon||'';
   document.getElementById('mn').textContent=p.name;
-  document.getElementById('mp').textContent='$'+p.price.toFixed(0);
+  document.getElementById('mp').textContent=(p.price===null||p.price===undefined||p.price===0)?'Proximamente':'$'+p.price.toFixed(0);
   document.getElementById('mc').textContent=p.compare_price?'$'+p.compare_price.toFixed(0):'';
   document.getElementById('mdesc').textContent=p.description||'';
   var palette = ['pastel-blue','pastel-green','brand-pink','brand-yellow','brand-peach','brand-lilac'];
@@ -1121,11 +1138,13 @@ function renderTierPills(p){
     box.className = 'mtiers empty'; box.innerHTML=''; return;
   }
   var mayoreo = model.tiers.slice(1); // el primer tier es menudeo (1-9), el resto es mayoreo
+  var mayoreoOrig = model.tiersOriginal ? model.tiersOriginal.slice(1) : null;
   box.className = 'mtiers';
   box.innerHTML = '<div class="mtiers-label">MAYOREO</div><div class="tierpills">'+
     mayoreo.map(function(t, i){
       var rango = t[1]===null ? (t[0]+'+') : (t[0]+'-'+t[1]);
-      return '<span class="tierpill tp'+(i%4)+'">'+rango+' pz: $'+t[2].toFixed(0)+'</span>';
+      var origTxt = (mayoreoOrig && mayoreoOrig[i]) ? '<s class="tierpill-orig">$'+mayoreoOrig[i][2].toFixed(0)+'</s> ' : '';
+      return '<span class="tierpill tp'+(i%4)+'">'+rango+' pz: '+origTxt+'$'+t[2].toFixed(0)+'</span>';
     }).join('')+'</div>';
 }
 
@@ -1139,13 +1158,19 @@ function renderFlavorPicker(p){
     box.innerHTML = '';
     return;
   }
+  var agotados = (p.sabores_agotados||[]);
   box.className = 'mflavor';
   box.innerHTML = '<div class="mflabel">'+f.label+'s <span class="req">(elige uno)</span></div>'+
     '<div class="flavor-list">'+f.options.map(function(opt){
-      return '<div class="flavor-row'+(selectedFlavor===opt?' on':'')+'" onclick="selectFlavor(\''+opt.replace(/'/g,"\\'")+'\')"><span>'+opt+'</span><span class="fdot"></span></div>';
+      var out = agotados.indexOf(opt)>=0;
+      var cls = 'flavor-row'+(selectedFlavor===opt?' on':'')+(out?' flavor-out':'');
+      var click = out ? '' : ' onclick="selectFlavor(\''+opt.replace(/'/g,"\\'")+'\')"';
+      var tag = out ? '<span class="ftag-out">Agotado</span>' : '';
+      return '<div class="'+cls+'"'+click+'><span>'+opt+'</span>'+tag+'<span class="fdot"></span></div>';
     }).join('')+'</div>';
 }
 function selectFlavor(opt){
+  if(cur && (cur.sabores_agotados||[]).indexOf(opt)>=0) return;
   selectedFlavor = opt;
   if(cur) renderFlavorPicker(cur);
 }
@@ -1633,7 +1658,11 @@ function continueToWhatsapp(){
     window.open('https://wa.me/'+(pendingWaNumber||W)+'?text='+encodeURIComponent(pendingWaMsg));
     pendingWaMsg = null;
     pendingWaNumber = null;
+    document.getElementById('waConfirmNotice').style.display = 'flex';
   }
+}
+function closeWaConfirmNotice(){
+  document.getElementById('waConfirmNotice').style.display = 'none';
 }
 
 // Descarga la imagen del resumen del pedido (PNG). En iOS Safari esto abre la
