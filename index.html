@@ -574,79 +574,36 @@ async function syncInventory(){
 async function logOrder(numeroPedido, cliente, telefono, items, totalPedido, extra){
   extra = extra || {};
   try{
-    // 1) Upsert de cliente (si el telefono ya existe, actualiza nombre/direccion; si no, lo crea)
-    var clientePayload = {
-      nombre: cliente,
-      telefono: telefono
-    };
-    if(extra.direccion){
-      clientePayload.calle = extra.direccion.calle;
-      clientePayload.numero = extra.direccion.numero;
-      clientePayload.colonia = extra.direccion.colonia;
-      clientePayload.codigo_postal = extra.direccion.cp;
-      clientePayload.ciudad = extra.direccion.ciudad;
-      clientePayload.estado = extra.direccion.estado;
-    }
-    var { data: clienteRow, error: clienteErr } = await supabaseClient
-      .from('clientes')
-      .upsert(clientePayload, { onConflict: 'telefono' })
-      .select()
-      .single();
-    if(clienteErr) throw clienteErr;
-
-    // 2) Buscar el id del vendedor por nombre (si se selecciono uno valido)
-    var vendedorId = null;
-    if(extra.vendedor && extra.vendedor !== 'NINGUNO'){
-      var { data: vendedorRow } = await supabaseClient
-        .from('vendedores')
-        .select('id')
-        .eq('nombre', extra.vendedor)
-        .maybeSingle();
-      if(vendedorRow) vendedorId = vendedorRow.id;
-    }
-
-    // 3) Insertar el pedido
-    var { data: pedidoRow, error: pedidoErr } = await supabaseClient
-      .from('pedidos')
-      .insert({
-        numero_folio: numeroPedido,
-        cliente_id: clienteRow.id,
-        vendedor_id: vendedorId,
-        tipo_envio: extra.tipoEnvio || 'tienda',
-        direccion_envio: extra.direccion || null,
-        costo_envio: extra.costoEnvio || null,
-        subtotal: totalPedido,
-        total: totalPedido,
-        estado: 'nuevo'
-      })
-      .select()
-      .single();
-    if(pedidoErr) throw pedidoErr;
-
-    // 4) Insertar las lineas del pedido
+    // Todo el guardado (cliente + pedido + productos + sello de lealtad) ahora
+    // pasa por una sola funcion en Supabase (crear_pedido). Esto es exactamente
+    // lo mismo que hacia antes paso a paso, solo que ahora corre del lado del
+    // servidor -- asi la app publica ya no necesita permiso para LEER las
+    // tablas de clientes/pedidos directamente (protege telefonos y direcciones).
     var itemsPayload = items.map(function(item){
       return {
-        pedido_id: pedidoRow.id,
-        producto_nombre: item.producto,
+        producto: item.producto,
         sabor: item.sabor || null,
         piezas: item.piezas,
-        precio_unitario: item.precioUnitario,
-        precio_total_linea: item.precioTotalFila
+        precioUnitario: item.precioUnitario,
+        precioTotalFila: item.precioTotalFila
       };
     });
-    var { error: itemsErr } = await supabaseClient.from('pedido_items').insert(itemsPayload);
-    if(itemsErr) throw itemsErr;
 
-    // 5) Sumar sello de lealtad y contador de pedidos al cliente
-    await supabaseClient
-      .from('clientes')
-      .update({
-        sellos_lealtad: (clienteRow.sellos_lealtad || 0) + 1,
-        total_pedidos: (clienteRow.total_pedidos || 0) + 1
-      })
-      .eq('id', clienteRow.id);
+    var { data, error } = await supabaseClient.rpc('crear_pedido', {
+      p_numero_folio: numeroPedido,
+      p_cliente_nombre: cliente,
+      p_cliente_telefono: telefono,
+      p_direccion: extra.direccion || null,
+      p_tipo_envio: extra.tipoEnvio || 'tienda',
+      p_costo_envio: extra.costoEnvio || null,
+      p_vendedor_nombre: extra.vendedor || null,
+      p_items: itemsPayload,
+      p_subtotal: totalPedido,
+      p_total: totalPedido
+    });
+    if(error) throw error;
 
-    console.log('Pedido guardado en Supabase correctamente:', numeroPedido);
+    console.log('Pedido guardado en Supabase correctamente:', numeroPedido, data);
   }catch(err){
     console.error('Error guardando pedido en Supabase:', err);
     // Aviso visible en pantalla para poder diagnosticar en celular (sin consola disponible).
