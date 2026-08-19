@@ -380,18 +380,17 @@ select.cname-input{appearance:none;-webkit-appearance:none;background-image:url(
 <div id="pdfNotice">
   <div class="pnbox">
     <div class="pnicon">&#128196;</div>
-    <div class="pntitle">Tu pedido esta listo</div>
-    <div class="pntext">Para completar tu pedido y que quede registrado, sigue estos 2 pasos:</div>
+    <div class="pntitle">Resumen de tu pedido</div>
+    <div class="pntext">El resumen de tu pedido ya se descargo. Si quieres completarlo da click en <b>Hacer pedido por WhatsApp</b> y mandale el resumen descargado a tu vendedor.</div>
     <img id="pnImgPreview" src="" alt="Resumen del pedido" style="width:100%;border-radius:12px;border:1px solid var(--border);margin:12px 0;">
-    <button class="pnbtn" onclick="downloadOrderImage()" style="background:var(--text);color:#ffffff;">1. Descarga la imagen del pedido (se guarda en tus fotos)</button>
-    <button class="pnbtn" onclick="continueToWhatsapp()" style="background:var(--green);color:#ffffff;margin-top:10px;">2. Da clic aqui para hacer tu pedido por WhatsApp</button>
+    <button class="pnbtn" onclick="continueToWhatsapp()" style="background:var(--green);color:#ffffff;">Hacer pedido por WhatsApp</button>
   </div>
 </div>
 <div id="waConfirmNotice" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:310;align-items:center;justify-content:center;padding:20px;">
   <div class="pnbox">
     <div class="pnicon">&#9989;</div>
-    <div class="pntitle">Listo, hemos recibido tu pedido</div>
-    <div class="pntext">No olvides darle <b>Enviar</b> en WhatsApp (junto con la imagen del pedido) para que te atendamos lo mas pronto posible.</div>
+    <div class="pntitle">Listo, tu pedido ya fue enviado</div>
+    <div class="pntext">No olvides mandar el resumen descargado al vendedor.</div>
     <button class="pnbtn" onclick="closeWaConfirmNotice()" style="background:var(--text);color:#ffffff;margin-top:10px;">Entendido</button>
   </div>
 </div>
@@ -1294,7 +1293,7 @@ function renderCart(){
     return s+unit*x.qty;
   },0);
   var tierNote = totalQty>=10 ? '<div class="ctiernote">'+totalQty+' piezas en el carrito &mdash; precio de mayoreo aplicado</div>' : '';
-  cf.innerHTML='<div class="cft">'+tierNote+'<div class="ctot"><span>Total ('+totalQty+' productos)</span><strong>$'+tot.toFixed(0)+'</strong></div><button class="bwapp" onclick="orderWapp()">&#128172; Pedir todo por WhatsApp</button></div>';
+  cf.innerHTML='<div class="cft">'+tierNote+'<div class="ctot"><span>Total ('+totalQty+' productos)</span><strong>$'+tot.toFixed(0)+'</strong></div><button class="bwapp" onclick="orderWapp()">&#128172; Resumen del pedido</button></div>';
 }
 
 function chqty(id,d){
@@ -1632,6 +1631,16 @@ async function orderWapp(){
     return { producto: r.name, sabor: r.flavor||'', piezas: r.qty, precioUnitario: r.unit, precioTotalFila: r.lineTotal };
   });
 
+  // Genera la imagen y dispara la descarga/compartir DE INMEDIATO (mismo click
+  // del usuario, sin await antes) para conservar el "user gesture" que iOS
+  // Safari exige para poder compartir/guardar la imagen en Fotos.
+  pendingOrderImage = generateOrderImage(numeroPedido, cliente, telefono, fecha, hora, rows, totalQty, tierApplies, selectedShipping, direccion, vendedor);
+  pendingOrderNum = numeroPedido;
+  if(pendingOrderImage){
+    document.getElementById('pnImgPreview').src = pendingOrderImage;
+    downloadOrderImage();
+  }
+
   // IMPORTANTE: en iPhone/Safari, doc.save() del PDF abre una vista nueva y esto
   // pausa la ejecucion de JS de la pestana original. Por eso el pedido se guarda
   // en Supabase PRIMERO (y se espera a que termine), y el PDF se genera/abre AL FINAL.
@@ -1641,13 +1650,8 @@ async function orderWapp(){
     direccion: direccion,
     costoEnvio: (typeof costoEnvioCalculado !== 'undefined' ? costoEnvioCalculado : null)
   });
-  pendingOrderImage = generateOrderImage(numeroPedido, cliente, telefono, fecha, hora, rows, totalQty, tierApplies, selectedShipping, direccion, vendedor);
-  pendingOrderNum = numeroPedido;
   pendingWaMsg = msg;
   pendingWaNumber = (vendedor && vendedor!=='NINGUNO' && VENDEDORES[vendedor]) ? VENDEDORES[vendedor] : W;
-  if(pendingOrderImage){
-    document.getElementById('pnImgPreview').src = pendingOrderImage;
-  }
   document.getElementById('pdfNotice').classList.add('open');
 }
 
@@ -1665,11 +1669,27 @@ function closeWaConfirmNotice(){
   document.getElementById('waConfirmNotice').style.display = 'none';
 }
 
-// Descarga la imagen del resumen del pedido (PNG). En iOS Safari esto abre la
-// imagen en una nueva pestana, desde donde el usuario puede mantener presionado
-// y elegir "Guardar imagen" -- mas facil para la mayoria que manejar un PDF.
+// Descarga/comparte la imagen del resumen del pedido (PNG).
+// En iOS Safari, un <a download> normalmente NO guarda en Fotos (solo abre
+// la imagen). Por eso primero intentamos el share sheet nativo (Web Share
+// API con archivo), que SI tiene la opcion "Guardar imagen" -> Fotos.
+// Si el navegador no soporta compartir archivos, caemos al metodo clasico.
 function downloadOrderImage(){
   if(!pendingOrderImage) return;
+  try{
+    var arr = pendingOrderImage.split(',');
+    var mime = arr[0].match(/:(.*?);/)[1];
+    var bstr = atob(arr[1]);
+    var n = bstr.length;
+    var u8arr = new Uint8Array(n);
+    while(n--){ u8arr[n] = bstr.charCodeAt(n); }
+    var fileName = 'Pedido_'+(pendingOrderNum||'VapeZone')+'.png';
+    var file = new File([u8arr], fileName, { type: mime });
+    if(navigator.canShare && navigator.canShare({ files: [file] })){
+      navigator.share({ files: [file], title: 'Resumen de tu pedido' }).catch(function(){});
+      return;
+    }
+  }catch(e){}
   var a = document.createElement('a');
   a.href = pendingOrderImage;
   a.download = 'Pedido_'+(pendingOrderNum||'VapeZone')+'.png';
