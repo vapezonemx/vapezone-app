@@ -1672,10 +1672,12 @@ function closeWaConfirmNotice(){
 // Descarga/comparte la imagen del resumen del pedido (PNG).
 // En iOS Safari, un <a download> abre el cuadro "Descargar este archivo?" y
 // lo guarda en la app Archivos (Descargas), NO en Fotos -- por eso no se veia
-// en el carrete. Primero intentamos el share sheet nativo (Web Share API con
-// archivo), que SI tiene la opcion "Guardar imagen" -> Fotos. Si el navegador
-// no lo soporta, abrimos la imagen en una pestana nueva para que el usuario
-// la mantenga presionada y elija "Agregar a Fotos" (metodo clasico y confiable).
+// en el carrete. Y una data: URL muy larga a veces no carga en pestana nueva
+// (pantalla en blanco). Por eso convertimos a un archivo/Blob real:
+// 1) intentamos el share sheet nativo (con la opcion "Guardar imagen" -> Fotos)
+// 2) si no esta disponible, abrimos un Blob URL en pestana nueva (esto SI
+//    carga en Safari) para que el usuario la mantenga presionada y elija
+//    "Agregar a Fotos".
 function downloadOrderImage(){
   if(!pendingOrderImage) return;
   try{
@@ -1686,11 +1688,16 @@ function downloadOrderImage(){
     var u8arr = new Uint8Array(n);
     while(n--){ u8arr[n] = bstr.charCodeAt(n); }
     var fileName = 'Pedido_'+(pendingOrderNum||'VapeZone')+'.png';
+    var blob = new Blob([u8arr], { type: mime });
     var file = new File([u8arr], fileName, { type: mime });
     if(navigator.canShare && navigator.canShare({ files: [file] })){
       navigator.share({ files: [file], title: 'Resumen de tu pedido' }).catch(function(){});
       return;
     }
+    var blobUrl = URL.createObjectURL(blob);
+    window.open(blobUrl, '_blank');
+    setTimeout(function(){ URL.revokeObjectURL(blobUrl); }, 60000);
+    return;
   }catch(e){}
   window.open(pendingOrderImage, '_blank');
 }
