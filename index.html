@@ -786,7 +786,7 @@ async function cargarProductosDesdeSupabase(){
         image: p.imagen_url,
         ribbon: ribbonFinal,
         description: p.descripcion || '',
-        tracked: false,
+        tracked: true,
         stock: p.stock_disponible ? 1 : 0,
         tiers_precio: p.tiers_precio || null,
         tiers_precio_original: p.tiers_precio_original || null,
