@@ -130,6 +130,9 @@ nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.97);bord
 #pdfNotice.open{display:flex;}
 .pnbox{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 22px;max-width:360px;text-align:center;position:relative;}
 .pnclose{position:absolute;top:10px;right:12px;background:none;border:none;font-size:22px;line-height:1;color:var(--text-secondary);cursor:pointer;padding:4px 8px;}
+.pnimgwrap{position:relative;margin:12px 0;border-radius:12px;border:2px dashed var(--brand-pink,#e0609e);padding:6px;background:#fff8fb;}
+.pnimgwrap img{width:100%;display:block;border-radius:8px;}
+.pnimghint{margin-top:8px;font-size:12px;font-weight:700;color:var(--brand-pink,#e0609e);}
 .pnicon{font-size:40px;margin-bottom:10px;}
 .pntitle{font-size:17px;font-weight:800;color:var(--text);margin-bottom:8px;}
 .pntext{font-size:13.5px;color:var(--muted);line-height:1.5;margin-bottom:18px;}
@@ -384,7 +387,10 @@ select.cname-input{appearance:none;-webkit-appearance:none;background-image:url(
     <div class="pnicon">&#128196;</div>
     <div class="pntitle">Resumen de tu pedido</div>
     <div class="pntext">Manten presionada la imagen de abajo y elige "Agregar a Fotos" para guardarla. Cuando quieras completar tu pedido da click en <b>Hacer pedido por WhatsApp</b> y mandale el resumen guardado a tu vendedor.</div>
-    <img id="pnImgPreview" src="" alt="Resumen del pedido" style="width:100%;border-radius:12px;border:1px solid var(--border);margin:12px 0;">
+    <div class="pnimgwrap">
+      <img id="pnImgPreview" src="" alt="Resumen del pedido">
+      <div class="pnimghint">&#9757; Manten presionada para guardar</div>
+    </div>
     <button class="pnbtn" onclick="continueToWhatsapp()" style="background:var(--green);color:#ffffff;">Hacer pedido por WhatsApp</button>
   </div>
 </div>
@@ -1409,10 +1415,10 @@ function generateOrderPDF(numeroPedido, cliente, telefono, fecha, hora, rows, to
 // con html2canvas NO esta disponible aqui, asi que construimos la imagen directamente
 // dibujando el resumen del pedido en un <canvas> nativo (mas simple y confiable en iOS).
 function generateOrderImage(numeroPedido, cliente, telefono, fecha, hora, rows, totalQty, tierApplies, envio, direccion, vendedor){
-  var W = 800, padding = 40;
+  var W = 900, padding = 40;
   var lineH = 26;
-  // Calculamos altura dinamica segun cuantos productos hay.
-  var extraLines = rows.reduce(function(s,r){ return s + (r.bogo?2:1); }, 0);
+  // Ahora cada producto ocupa una sola linea (piezas/promocion van en columnas).
+  var extraLines = rows.length;
   var H = 360 + (extraLines*lineH) + (envio==='domicilio'?40:0);
 
   var canvas = document.createElement('canvas');
@@ -1458,14 +1464,20 @@ function generateOrderImage(numeroPedido, cliente, telefono, fecha, hora, rows, 
   }
   y += 14;
 
-  ctx.font = 'bold 12px -apple-system, Arial, sans-serif';
+  // Columnas: PRODUCTO | PIEZAS | PIEZAS PROMOCION | PIEZAS TOTALES | P.UNIT | SUBTOTAL
+  var colPz = 400, colPromo = 470, colTot = 570, colUnit = 660;
+  ctx.font = 'bold 11px -apple-system, Arial, sans-serif';
   ctx.fillText('PRODUCTO', x, y);
-  ctx.fillText('PZ', 470, y);
-  ctx.fillText('P. UNIT', 540, y);
+  ctx.fillText('PIEZAS', colPz, y);
+  ctx.fillText('PIEZAS', colPromo, y);
+  ctx.fillText('PROMOCION', colPromo, y+11);
+  ctx.fillText('PIEZAS', colTot, y);
+  ctx.fillText('TOTALES', colTot, y+11);
+  ctx.fillText('P. UNIT', colUnit, y);
   ctx.textAlign = 'right';
   ctx.fillText('SUBTOTAL', W-padding, y);
   ctx.textAlign = 'left';
-  y += 8;
+  y += 20;
   ctx.strokeStyle = '#111111';
   ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(W-padding,y); ctx.stroke();
   y += 24;
@@ -1473,20 +1485,27 @@ function generateOrderImage(numeroPedido, cliente, telefono, fecha, hora, rows, 
   ctx.font = '13px -apple-system, Arial, sans-serif';
   rows.forEach(function(r){
     var nameLine = r.name + (r.flavor ? ' - '+r.flavor : '');
-    if(nameLine.length > 45) nameLine = nameLine.slice(0,45)+'...';
+    if(nameLine.length > 38) nameLine = nameLine.slice(0,38)+'...';
     ctx.fillText(nameLine, x, y);
-    ctx.fillText(String(r.qty), 470, y);
-    ctx.fillText('$'+r.unit.toFixed(0), 540, y);
+    ctx.fillText(String(r.qty), colPz, y);
+    if(r.bogo && r.bogo.free>0){
+      ctx.fillStyle = '#1a9c4a';
+      ctx.fillText('+'+r.bogo.free, colPromo, y);
+      ctx.fillStyle = '#111111';
+      ctx.font = 'bold 13px -apple-system, Arial, sans-serif';
+      ctx.fillText(String(r.bogo.received), colTot, y);
+      ctx.font = '13px -apple-system, Arial, sans-serif';
+    } else {
+      ctx.fillStyle = '#8b8b8f';
+      ctx.fillText('-', colPromo, y);
+      ctx.fillStyle = '#111111';
+      ctx.fillText(String(r.qty), colTot, y);
+    }
+    ctx.fillText('$'+r.unit.toFixed(0), colUnit, y);
     ctx.textAlign = 'right';
     ctx.fillText('$'+r.lineTotal.toFixed(0), W-padding, y);
     ctx.textAlign = 'left';
     y += lineH;
-    if(r.bogo){
-      ctx.fillStyle = '#8b8b8f'; ctx.font = '11px -apple-system, Arial, sans-serif';
-      ctx.fillText(r.qty+' pagadas + '+r.bogo.free+' GRATIS -> recibes '+r.bogo.received, x, y);
-      ctx.fillStyle = '#111111'; ctx.font = '13px -apple-system, Arial, sans-serif';
-      y += lineH;
-    }
   });
 
   ctx.strokeStyle = '#e6e6e8';
