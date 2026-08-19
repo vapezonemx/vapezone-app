@@ -381,7 +381,7 @@ select.cname-input{appearance:none;-webkit-appearance:none;background-image:url(
   <div class="pnbox">
     <div class="pnicon">&#128196;</div>
     <div class="pntitle">Resumen de tu pedido</div>
-    <div class="pntext">El resumen de tu pedido ya se descargo. Si quieres completarlo da click en <b>Hacer pedido por WhatsApp</b> y mandale el resumen descargado a tu vendedor.</div>
+    <div class="pntext">El resumen de tu pedido ya se descargo (si te aparecio la imagen en una pestana nueva, mantenla presionada y elige "Agregar a Fotos"). Si quieres completarlo da click en <b>Hacer pedido por WhatsApp</b> y mandale el resumen descargado a tu vendedor.</div>
     <img id="pnImgPreview" src="" alt="Resumen del pedido" style="width:100%;border-radius:12px;border:1px solid var(--border);margin:12px 0;">
     <button class="pnbtn" onclick="continueToWhatsapp()" style="background:var(--green);color:#ffffff;">Hacer pedido por WhatsApp</button>
   </div>
@@ -1293,7 +1293,7 @@ function renderCart(){
     return s+unit*x.qty;
   },0);
   var tierNote = totalQty>=10 ? '<div class="ctiernote">'+totalQty+' piezas en el carrito &mdash; precio de mayoreo aplicado</div>' : '';
-  cf.innerHTML='<div class="cft">'+tierNote+'<div class="ctot"><span>Total ('+totalQty+' productos)</span><strong>$'+tot.toFixed(0)+'</strong></div><button class="bwapp" onclick="orderWapp()">&#128172; Resumen del pedido</button></div>';
+  cf.innerHTML='<div class="cft">'+tierNote+'<div class="ctot"><span>Total ('+totalQty+' productos)</span><strong>$'+tot.toFixed(0)+'</strong></div><button class="bwapp" style="background:#000;" onclick="orderWapp()">&#128172; Hacer Pedido</button></div>';
 }
 
 function chqty(id,d){
@@ -1670,10 +1670,12 @@ function closeWaConfirmNotice(){
 }
 
 // Descarga/comparte la imagen del resumen del pedido (PNG).
-// En iOS Safari, un <a download> normalmente NO guarda en Fotos (solo abre
-// la imagen). Por eso primero intentamos el share sheet nativo (Web Share
-// API con archivo), que SI tiene la opcion "Guardar imagen" -> Fotos.
-// Si el navegador no soporta compartir archivos, caemos al metodo clasico.
+// En iOS Safari, un <a download> abre el cuadro "Descargar este archivo?" y
+// lo guarda en la app Archivos (Descargas), NO en Fotos -- por eso no se veia
+// en el carrete. Primero intentamos el share sheet nativo (Web Share API con
+// archivo), que SI tiene la opcion "Guardar imagen" -> Fotos. Si el navegador
+// no lo soporta, abrimos la imagen en una pestana nueva para que el usuario
+// la mantenga presionada y elija "Agregar a Fotos" (metodo clasico y confiable).
 function downloadOrderImage(){
   if(!pendingOrderImage) return;
   try{
@@ -1690,12 +1692,7 @@ function downloadOrderImage(){
       return;
     }
   }catch(e){}
-  var a = document.createElement('a');
-  a.href = pendingOrderImage;
-  a.download = 'Pedido_'+(pendingOrderNum||'VapeZone')+'.png';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  window.open(pendingOrderImage, '_blank');
 }
 
 function openWapp(p){
