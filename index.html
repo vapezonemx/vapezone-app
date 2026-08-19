@@ -1093,15 +1093,19 @@ function render(){
   updateHomeVisibility();
   var q=document.getElementById('srch').value.trim().toLowerCase();
   var f=P.filter(function(p){
-    var mc=cat==='TODOS'||p.category===cat;
     var mq=!q||p.name.toLowerCase().indexOf(q)>=0||p.sku.toLowerCase().indexOf(q)>=0;
+    // Si hay texto en el buscador, buscamos en TODO el catalogo sin importar
+    // en que categoria o marca estes parado (antes se quedaba atrapado
+    // dentro del filtro activo y por eso no encontraba nada).
+    if(q) return mq;
+    var mc=cat==='TODOS'||p.category===cat;
     var msub = true;
     if(subFilter==='PROMOS'){
       msub = isPromo(p);
     } else if(cat==='VAPES' && subFilter){
       msub = vapeBrand(p.name)===subFilter;
     }
-    return mc&&mq&&msub;
+    return mc&&msub;
   });
   document.getElementById('rc').textContent=f.length+' producto'+(f.length!==1?'s':'')+' ('+P.length+' en catalogo completo)';
   if(f.length===0){
