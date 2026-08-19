@@ -1421,8 +1421,8 @@ function generateOrderPDF(numeroPedido, cliente, telefono, fecha, hora, rows, to
 function generateOrderImage(numeroPedido, cliente, telefono, fecha, hora, rows, totalQty, tierApplies, envio, direccion, vendedor){
   var W = 900, padding = 40;
   var lineH = 26;
-  // Ahora cada producto ocupa una sola linea (piezas/promocion van en columnas).
-  var extraLines = rows.length;
+  // Cada producto ocupa una linea, +1 linea extra si tiene leyenda de promo (BOGO).
+  var extraLines = rows.reduce(function(s,r){ return s + (r.bogo && r.bogo.free>0 ? 2 : 1); }, 0);
   var H = 360 + (extraLines*lineH) + (envio==='domicilio'?40:0);
 
   var canvas = document.createElement('canvas');
@@ -1432,6 +1432,21 @@ function generateOrderImage(numeroPedido, cliente, telefono, fecha, hora, rows, 
   ctx.scale(scale, scale);
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0,0,W,H);
+
+  // Dibuja un texto con una linea horizontal encima (precio original tachado)
+  // y regresa el ancho ocupado, para poder acomodar el precio con descuento justo despues.
+  function drawStrike(text, sx, sy){
+    ctx.save();
+    ctx.fillStyle = '#a8a8ac';
+    ctx.font = '11px -apple-system, Arial, sans-serif';
+    ctx.fillText(text, sx, sy);
+    var w = ctx.measureText(text).width;
+    ctx.strokeStyle = '#a8a8ac';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(sx, sy-4); ctx.lineTo(sx+w, sy-4); ctx.stroke();
+    ctx.restore();
+    return w;
+  }
 
   var x = padding, y = 50;
   ctx.fillStyle = '#111111';
@@ -1505,11 +1520,22 @@ function generateOrderImage(numeroPedido, cliente, telefono, fecha, hora, rows, 
       ctx.fillStyle = '#111111';
       ctx.fillText(String(r.qty), colTot, y);
     }
-    ctx.fillText('$'+r.unit.toFixed(0), colUnit, y);
+    if(r.unitOriginal){
+      var ow = drawStrike('$'+r.unitOriginal.toFixed(0), colUnit, y);
+      ctx.fillText('$'+r.unit.toFixed(0), colUnit+ow+8, y);
+    } else {
+      ctx.fillText('$'+r.unit.toFixed(0), colUnit, y);
+    }
     ctx.textAlign = 'right';
     ctx.fillText('$'+r.lineTotal.toFixed(0), W-padding, y);
     ctx.textAlign = 'left';
     y += lineH;
+    if(r.bogo && r.bogo.free>0){
+      ctx.fillStyle = '#8b8b8f'; ctx.font = '11px -apple-system, Arial, sans-serif';
+      ctx.fillText(r.qty+' pagadas + '+r.bogo.free+' GRATIS -> recibes '+r.bogo.received, x, y);
+      ctx.fillStyle = '#111111'; ctx.font = '13px -apple-system, Arial, sans-serif';
+      y += lineH;
+    }
   });
 
   ctx.strokeStyle = '#e6e6e8';
@@ -1626,19 +1652,26 @@ async function orderWapp(){
   var rows = cart.map(function(item){
     var model = findModel(item.sku);
     var unit = item.price;
+    var unitOriginal = null;
     var bogo = null;
     if(model && tierApplies){
       unit = tierPrice(model.tiers, totalQty);
+      if(model.tiersOriginal){
+        unitOriginal = tierPrice(model.tiersOriginal, totalQty);
+      }
       if(model.bogo && totalQty >= (model.bogoMin||10)){
         var free = item.qty * (model.bogo - 1);
         bogo = { free: free, received: item.qty+free };
       }
+    } else if(item.compare_price && item.compare_price > unit){
+      unitOriginal = item.compare_price;
     }
     return {
       name: item.name,
       flavor: item.flavor||null,
       qty: item.qty,
       unit: unit,
+      unitOriginal: (unitOriginal && unitOriginal>unit) ? unitOriginal : null,
       lineTotal: unit*item.qty,
       bogo: bogo
     };
