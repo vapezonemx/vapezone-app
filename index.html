@@ -128,7 +128,8 @@ nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.97);bord
 .cflavor{font-size:11.5px;color:var(--muted);margin-top:2px;}
 #pdfNotice{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;align-items:center;justify-content:center;padding:20px;}
 #pdfNotice.open{display:flex;}
-.pnbox{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 22px;max-width:360px;text-align:center;}
+.pnbox{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 22px;max-width:360px;text-align:center;position:relative;}
+.pnclose{position:absolute;top:10px;right:12px;background:none;border:none;font-size:22px;line-height:1;color:var(--text-secondary);cursor:pointer;padding:4px 8px;}
 .pnicon{font-size:40px;margin-bottom:10px;}
 .pntitle{font-size:17px;font-weight:800;color:var(--text);margin-bottom:8px;}
 .pntext{font-size:13.5px;color:var(--muted);line-height:1.5;margin-bottom:18px;}
@@ -379,18 +380,20 @@ select.cname-input{appearance:none;-webkit-appearance:none;background-image:url(
 </div>
 <div id="pdfNotice">
   <div class="pnbox">
+    <button class="pnclose" onclick="closePdfNotice()" aria-label="Cerrar">&times;</button>
     <div class="pnicon">&#128196;</div>
     <div class="pntitle">Resumen de tu pedido</div>
-    <div class="pntext">El resumen de tu pedido ya se descargo (si te aparecio la imagen en una pestana nueva, mantenla presionada y elige "Agregar a Fotos"). Si quieres completarlo da click en <b>Hacer pedido por WhatsApp</b> y mandale el resumen descargado a tu vendedor.</div>
+    <div class="pntext">Manten presionada la imagen de abajo y elige "Agregar a Fotos" para guardarla. Cuando quieras completar tu pedido da click en <b>Hacer pedido por WhatsApp</b> y mandale el resumen guardado a tu vendedor.</div>
     <img id="pnImgPreview" src="" alt="Resumen del pedido" style="width:100%;border-radius:12px;border:1px solid var(--border);margin:12px 0;">
     <button class="pnbtn" onclick="continueToWhatsapp()" style="background:var(--green);color:#ffffff;">Hacer pedido por WhatsApp</button>
   </div>
 </div>
 <div id="waConfirmNotice" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:310;align-items:center;justify-content:center;padding:20px;">
   <div class="pnbox">
+    <button class="pnclose" onclick="closeWaConfirmNotice()" aria-label="Cerrar">&times;</button>
     <div class="pnicon">&#9989;</div>
     <div class="pntitle">Listo, tu pedido ya fue enviado</div>
-    <div class="pntext">No olvides mandar el resumen descargado al vendedor.</div>
+    <div class="pntext">No olvides mandar el resumen guardado al vendedor.</div>
     <button class="pnbtn" onclick="closeWaConfirmNotice()" style="background:var(--text);color:#ffffff;margin-top:10px;">Entendido</button>
   </div>
 </div>
@@ -1668,16 +1671,16 @@ function continueToWhatsapp(){
 function closeWaConfirmNotice(){
   document.getElementById('waConfirmNotice').style.display = 'none';
 }
+function closePdfNotice(){
+  document.getElementById('pdfNotice').classList.remove('open');
+}
 
 // Descarga/comparte la imagen del resumen del pedido (PNG).
-// En iOS Safari, un <a download> abre el cuadro "Descargar este archivo?" y
-// lo guarda en la app Archivos (Descargas), NO en Fotos -- por eso no se veia
-// en el carrete. Y una data: URL muy larga a veces no carga en pestana nueva
-// (pantalla en blanco). Por eso convertimos a un archivo/Blob real:
-// 1) intentamos el share sheet nativo (con la opcion "Guardar imagen" -> Fotos)
-// 2) si no esta disponible, abrimos un Blob URL en pestana nueva (esto SI
-//    carga en Safari) para que el usuario la mantenga presionada y elija
-//    "Agregar a Fotos".
+// Primero intentamos el share sheet nativo (con la opcion "Guardar imagen"
+// -> Fotos, automatico). Si el navegador no lo soporta, no hacemos nada mas:
+// la imagen ya se ve en el popup (#pnImgPreview) y el usuario solo tiene que
+// mantenerla presionada ahi mismo y elegir "Agregar a Fotos" -- sin salir de
+// la app ni abrir otra pestana.
 function downloadOrderImage(){
   if(!pendingOrderImage) return;
   try{
@@ -1688,18 +1691,11 @@ function downloadOrderImage(){
     var u8arr = new Uint8Array(n);
     while(n--){ u8arr[n] = bstr.charCodeAt(n); }
     var fileName = 'Pedido_'+(pendingOrderNum||'VapeZone')+'.png';
-    var blob = new Blob([u8arr], { type: mime });
     var file = new File([u8arr], fileName, { type: mime });
     if(navigator.canShare && navigator.canShare({ files: [file] })){
       navigator.share({ files: [file], title: 'Resumen de tu pedido' }).catch(function(){});
-      return;
     }
-    var blobUrl = URL.createObjectURL(blob);
-    window.open(blobUrl, '_blank');
-    setTimeout(function(){ URL.revokeObjectURL(blobUrl); }, 60000);
-    return;
   }catch(e){}
-  window.open(pendingOrderImage, '_blank');
 }
 
 function openWapp(p){
