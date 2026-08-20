@@ -165,7 +165,8 @@ nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.97);bord
 .ctiernote{font-size:11px;color:var(--accent);margin-bottom:8px;text-align:center;}
 .cq{display:flex;align-items:center;gap:8px;margin-top:6px;}
 .qb{background:var(--surface2);border:1px solid var(--border);border-radius:50%;width:26px;height:26px;color:var(--text);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.qv{font-size:13px;font-weight:700;min-width:20px;text-align:center;}
+.qv{font-size:13px;font-weight:700;min-width:38px;width:38px;text-align:center;border:1px solid var(--border);border-radius:8px;padding:5px 2px;background:#fff;-moz-appearance:textfield;}
+.qv::-webkit-outer-spin-button,.qv::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 .rm{color:var(--muted);background:none;border:none;font-size:18px;cursor:pointer;}
 .cft{border-top:1px solid var(--border);padding:16px;background:var(--surface);}
 .ctot{display:flex;justify-content:space-between;margin-bottom:14px;font-size:15px;}
@@ -1282,7 +1283,7 @@ function renderCart(){
     var priceHtml = '$'+lineTotal.toFixed(0)+(wasPrice?' <span class="cwas">$'+(wasPrice*item.qty).toFixed(0)+'</span>':'');
     var unitNote = showUnitNote ? ' <span class="cu">($'+unit.toFixed(0)+' c/u)</span>' : '';
     var flavorHtml = item.flavor ? '<div class="cflavor">'+item.flavor+'</div>' : '';
-    return '<div class="ci"><img class="ciimg" src="'+item.image+'" onerror="this.src=\'\'" alt=""><div class="cii"><div class="cin">'+item.name+'</div>'+flavorHtml+'<div class="cip">'+priceHtml+unitNote+'</div>'+bogoLine+'<div class="cq"><button class="qb" onclick="chqty(\''+item.id+'\',-1)">-</button><span class="qv">'+item.qty+'</span><button class="qb" onclick="chqty(\''+item.id+'\',1)">+</button></div></div><button class="rm" onclick="rmCart(\''+item.id+'\')">&#128465;</button></div>';
+    return '<div class="ci"><img class="ciimg" src="'+item.image+'" onerror="this.src=\'\'" alt=""><div class="cii"><div class="cin">'+item.name+'</div>'+flavorHtml+'<div class="cip">'+priceHtml+unitNote+'</div>'+bogoLine+'<div class="cq"><button class="qb" onclick="chqty(\''+item.id+'\',-1)">-</button><input class="qv" type="number" inputmode="numeric" min="1" value="'+item.qty+'" onchange="setCartQtyManual(\''+item.id+'\',this.value)"><button class="qb" onclick="chqty(\''+item.id+'\',1)">+</button></div></div><button class="rm" onclick="rmCart(\''+item.id+'\')">&#128465;</button></div>';
   }).join('');
 
   var tot=cart.reduce(function(s,x){
@@ -1299,6 +1300,17 @@ function chqty(id,d){
   if(!item)return;
   item.qty+=d;
   if(item.qty<=0)cart=cart.filter(function(x){return x.id!==id;});
+  badge();renderCart();
+}
+function setCartQtyManual(id,val){
+  var v = parseInt(val,10);
+  var item=cart.find(function(x){return x.id===id;});
+  if(!item)return;
+  if(isNaN(v) || v<1){
+    cart=cart.filter(function(x){return x.id!==id;});
+  } else {
+    item.qty = v;
+  }
   badge();renderCart();
 }
 function rmCart(id){
