@@ -13,5 +13,8 @@ self.addEventListener('activate', function(e){
   );
 });
 self.addEventListener('fetch', function(e){
-  e.respondWith(fetch(e.request));
+  // {cache:'no-store'} obliga a que SIEMPRE vaya a la red por una copia
+  // nueva, ignorando por completo lo que Safari tenga guardado. Esto es lo
+  // que realmente evita tener que borrar historial en cada actualizacion.
+  e.respondWith(fetch(e.request, { cache: 'no-store' }));
 });
