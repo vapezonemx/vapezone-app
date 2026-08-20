@@ -380,10 +380,8 @@ select.cname-input{appearance:none;-webkit-appearance:none;background-image:url(
       <input id="ship-calc-ciudad" class="cname-input" type="text" placeholder="Ciudad" value="Monterrey">
       <input id="ship-calc-estado" class="cname-input" type="text" placeholder="Estado" value="Nuevo Leon">
     </div>
-    <button class="bf bwf" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;border:none;background:var(--text);color:var(--bg);margin-top:14px;" id="ship-calc-btn" onclick="calcularEnvio()">Calcular costo de envio</button>
+    <button class="bf bwf" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;border:none;background:var(--green);color:#fff;margin-top:14px;" id="ship-calc-btn" onclick="solicitarCotizacionEnvio()">&#128172; Solicitar costo de envio</button>
     <div id="ship-calc-result" style="display:none;margin-top:16px;"></div>
-    <br>
-    <button class="bf bwf" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;border:none;background:var(--green);color:#fff;" onclick="openWapp(null)">&#128172; Preguntar costo de envio</button>
   </div>
 </div>
 <div id="mo" onclick="closeMo(event)">
@@ -1851,6 +1849,30 @@ function closeContact(){
 // completo en una Edge Function de Supabase (calcular_envio). El navegador
 // del cliente nunca ve la direccion ni las coordenadas de la tienda, nomas
 // manda su propia direccion y recibe el costo/km ya calculados.
+function solicitarCotizacionEnvio(){
+  var calle = document.getElementById('ship-calc-calle').value.trim();
+  var numero = document.getElementById('ship-calc-numero').value.trim();
+  var colonia = document.getElementById('ship-calc-colonia').value.trim();
+  var cp = document.getElementById('ship-calc-cp').value.trim();
+  var ciudad = document.getElementById('ship-calc-ciudad').value.trim();
+  var estado = document.getElementById('ship-calc-estado').value.trim();
+
+  if(!calle || !numero || !colonia || !cp || !ciudad || !estado){
+    toast('Completa todos los campos de la direccion');
+    return;
+  }
+
+  var msg = 'Hola! Me podrias cotizar envio a esta direccion:\n'
+    + 'Calle: ' + calle + '\n'
+    + 'Numero: ' + numero + '\n'
+    + 'Colonia: ' + colonia + '\n'
+    + 'Codigo postal: ' + cp + '\n'
+    + 'Ciudad: ' + ciudad + '\n'
+    + 'Estado: ' + estado;
+
+  window.open('https://wa.me/'+W+'?text='+encodeURIComponent(msg));
+}
+
 async function calcularEnvio(){
   var calle = document.getElementById('ship-calc-calle').value.trim();
   var numero = document.getElementById('ship-calc-numero').value.trim();
