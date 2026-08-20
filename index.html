@@ -77,7 +77,8 @@ header{background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom
 .cadd{background:var(--adim);border:1px solid var(--accent);border-radius:6px;padding:5px;margin-top:6px;color:var(--accent);font-size:11px;font-weight:700;text-align:center;letter-spacing:.5px;}
 .cqrow{display:flex;align-items:center;gap:4px;margin-top:6px;}
 .cqb{background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:24px;height:24px;flex-shrink:0;color:var(--text);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.cqv{font-size:12px;font-weight:700;min-width:16px;text-align:center;flex-shrink:0;}
+.cqv{font-size:12px;font-weight:700;min-width:34px;width:34px;text-align:center;flex-shrink:0;border:1px solid var(--border);border-radius:6px;padding:4px 2px;background:#fff;-moz-appearance:textfield;}
+.cqv::-webkit-outer-spin-button,.cqv::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 .cqrow .cadd{flex:1;margin-top:0;padding:5px 2px;}
 .cout{background:var(--surface2);border-color:var(--border);color:var(--muted);}
 .coutcard{opacity:.45;cursor:default;}
@@ -144,7 +145,8 @@ nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.97);bord
 .mfootbar{background:var(--surface);display:flex;align-items:center;gap:12px;padding:14px 20px;border-top:1px solid var(--border);}
 .mqrow2{display:flex;align-items:center;gap:14px;flex-shrink:0;}
 .mqb2{background:var(--surface2);border:1px solid var(--border);border-radius:50%;width:34px;height:34px;color:#111;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.mqv{font-size:15px;font-weight:700;min-width:20px;text-align:center;}
+.mqv{font-size:15px;font-weight:700;min-width:44px;width:44px;text-align:center;border:1px solid var(--border);border-radius:8px;padding:6px 2px;background:#fff;-moz-appearance:textfield;}
+.mqv::-webkit-outer-spin-button,.mqv::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 .badd2{flex:1;background:var(--pastel-green);border:none;border-radius:24px;padding:13px;color:var(--pastel-green-tx);font-size:15px;font-weight:700;cursor:pointer;}
 #cv{display:none;position:fixed;inset:0;background:var(--bg);z-index:200;flex-direction:column;}
 #cv.open{display:flex;}
@@ -376,7 +378,7 @@ select.cname-input{appearance:none;-webkit-appearance:none;background-image:url(
       <div class="mfootbar">
         <div class="mqrow2">
           <button class="mqb2" onclick="bumpModalQty(-1)">-</button>
-          <span class="mqv" id="mqv">1</span>
+          <input class="mqv" id="mqv" type="number" inputmode="numeric" min="1" value="1" onchange="setModalQtyManual(this.value)">
           <button class="mqb2" onclick="bumpModalQty(1)">+</button>
         </div>
         <button class="badd2" onclick="addCartFromModal()">Agregar</button>
@@ -943,7 +945,15 @@ function bumpQty(id,d,e){
   if(v<1) v=1;
   qtySel[id]=v;
   var el = document.getElementById('qsel_'+id);
-  if(el) el.textContent = v;
+  if(el) el.value = v;
+}
+function setQtyManual(id,val,e){
+  if(e) e.stopPropagation();
+  var v = parseInt(val,10);
+  if(isNaN(v) || v<1) v=1;
+  qtySel[id]=v;
+  var el = document.getElementById('qsel_'+id);
+  if(el) el.value = v;
 }
 function addCartFromCard(id,e){
   if(e) e.stopPropagation();
@@ -1041,7 +1051,7 @@ function cardHtml(p){
     hasFlavor ? '<div class="cqrow" onclick="event.stopPropagation()"><button class="cadd" onclick="openMo(\''+p.id+'\')">Elegir '+flvInfo.label.toLowerCase()+'</button></div>' :
     '<div class="cqrow" onclick="event.stopPropagation()">'+
       '<button class="cqb" onclick="bumpQty(\''+p.id+'\',-1,event)">-</button>'+
-      '<span class="cqv" id="qsel_'+p.id+'">'+getQty(p.id)+'</span>'+
+      '<input class="cqv" id="qsel_'+p.id+'" type="number" inputmode="numeric" min="1" value="'+getQty(p.id)+'" onclick="event.stopPropagation()" onchange="setQtyManual(\''+p.id+'\',this.value,event)">'+
       '<button class="cqb" onclick="bumpQty(\''+p.id+'\',1,event)">+</button>'+
       '<button class="cadd" onclick="addCartFromCard(\''+p.id+'\',event)">Agregar</button>'+
     '</div>';
@@ -1084,7 +1094,7 @@ function openMo(id){
   if(!p)return;
   cur=p;
   modalQty=1;
-  document.getElementById('mqv').textContent='1';
+  document.getElementById('mqv').value='1';
   var mi=document.getElementById('mi');
   mi.src=p.image||'';
   mi.style.display=p.image?'block':'none';
@@ -1149,7 +1159,13 @@ function selectFlavor(opt){
 function bumpModalQty(d){
   modalQty += d;
   if(modalQty<1) modalQty=1;
-  document.getElementById('mqv').textContent = modalQty;
+  document.getElementById('mqv').value = modalQty;
+}
+function setModalQtyManual(val){
+  var v = parseInt(val,10);
+  if(isNaN(v) || v<1) v=1;
+  modalQty = v;
+  document.getElementById('mqv').value = v;
 }
 function addCartFromModal(){
   if(!cur) return;
@@ -1169,7 +1185,7 @@ function addCartFromModal(){
   if(f && f.options && f.options.length){
     selectedFlavor = null;
     modalQty = 1;
-    document.getElementById('mqv').textContent='1';
+    document.getElementById('mqv').value='1';
     renderFlavorPicker(cur);
   } else {
     document.getElementById('mo').classList.remove('open');
