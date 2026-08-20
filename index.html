@@ -206,6 +206,33 @@ select.cname-input{appearance:none;-webkit-appearance:none;background-image:url(
 .brand-yellow{background:var(--brand-yellow);color:var(--brand-yellow-tx);}
 .brand-peach{background:var(--brand-peach);color:var(--brand-peach-tx);}
 .brand-lilac{background:var(--brand-lilac);color:var(--brand-lilac-tx);}
+.ic{border-radius:14px;padding:14px 16px;margin-bottom:10px;background:var(--surface2);}
+.ic .il{font-size:11px;font-weight:800;letter-spacing:.04em;opacity:.6;margin-bottom:4px;color:var(--text);}
+.ic .iv{font-size:14px;font-weight:700;line-height:1.4;color:var(--text);}
+.ic .is{font-size:13px;font-weight:600;line-height:1.4;margin-top:2px;opacity:.75;color:var(--text);}
+.socialrow{display:flex;gap:12px;margin:14px 0 20px;}
+.sociallink{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border-radius:14px;text-decoration:none;font-size:12px;font-weight:700;}
+.sociallink svg{width:26px;height:26px;}
+.social-wa{background:#dcf8e6;color:#1a8a4a;}
+.social-fb{background:#dce9fb;color:#1a5fb4;}
+.social-ig{background:linear-gradient(135deg,#fbe1c6,#f8d7e3);color:#a8367a;}
+.faqitem{border-bottom:1px solid var(--border);}
+.faqbtn{width:100%;text-align:left;background:none;border:none;padding:14px 4px;font-size:14px;font-weight:700;color:var(--text);display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;}
+.faqbtn .faqarrow{flex-shrink:0;font-size:12px;transition:transform .15s;color:var(--text-secondary);}
+.faqbtn.open .faqarrow{transform:rotate(180deg);}
+.faqbody{max-height:0;overflow:hidden;transition:max-height .2s ease;}
+.faqbody.open{max-height:400px;}
+.faqbody .faqinner{padding:0 4px 16px;font-size:13.5px;line-height:1.5;color:var(--text-secondary);}
+.faqbody .faqinner b{color:var(--text);}
+.faqsecbtn{width:100%;text-align:left;background:none;border:none;padding:14px 4px;font-size:16px;font-weight:800;color:#2c3e50;display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;border-bottom:2px solid #2c3e50;}
+.faqsecbtn .faqarrow{flex-shrink:0;font-size:13px;transition:transform .15s;color:#2c3e50;}
+.faqsecbtn.open .faqarrow{transform:rotate(180deg);}
+.faqsecbody{max-height:0;overflow:hidden;transition:max-height .25s ease;}
+.faqsecbody.open{max-height:2000px;}
+.faqsecbody .faqpair{padding:14px 4px;border-bottom:1px solid var(--border);}
+.faqsecbody .faqq{font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.faqsecbody .faqa{font-size:13.5px;line-height:1.5;color:var(--text-secondary);}
+.faqsecbody .faqa b{color:var(--text);}
 .wabanner{display:flex;align-items:center;gap:14px;background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:14px;cursor:pointer;}
 .wabanner-icon{font-size:26px;flex-shrink:0;}
 .wabanner-text{flex:1;}
@@ -234,7 +261,7 @@ select.cname-input{appearance:none;-webkit-appearance:none;background-image:url(
      cuando la PWA este lista para ser publica en el dominio propio.
      ============================================================ -->
 <script>
-  const SITE_COMING_SOON = true;
+  const SITE_COMING_SOON = false;
   // "Puerta trasera": si la URL incluye ?preview=vzteam2026 se salta la pantalla
   // de "Proximamente" y se puede seguir revisando la app normalmente.
   // Ejemplo: https://vapezonemx.com.mx/?preview=vzteam2026
@@ -414,15 +441,52 @@ select.cname-input{appearance:none;-webkit-appearance:none;background-image:url(
   <div class="khdr" style="padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;"><button class="bk" onclick="closeContact()">&#8592;</button><span class="ctit">Informacion</span></div>
   <div class="kb" style="padding:20px;">
     <div class="ic"><div class="il">TELEFONO / WHATSAPP</div><div class="iv">+52 81 8705 7209</div></div>
-    <div class="ic"><div class="il">HORARIO</div><div class="iv">Lun - Vie: 9:00 - 18:30</div><div class="is">Sabado: 10:00 - 14:00</div></div>
-    <div class="ic"><div class="il">ENTREGA LOCAL</div><div class="iv">Monterrey y Area Metro</div><div class="is">Mismo dia - Envios nacionales</div></div>
-    <div class="ic"><div class="il">PAGOS</div><div class="iv">MercadoPago - Transferencia</div></div>
-    <br>
-    <div class="sechead" style="margin-bottom:10px;">Preguntas frecuentes</div>
-    <div class="ic"><div class="il">CUANTO TARDA MI PEDIDO?</div><div class="iv">Contenido pendiente -- reemplazar con la respuesta real.</div></div>
-    <div class="ic"><div class="il">HACEN ENVIOS A TODO MEXICO?</div><div class="iv">Contenido pendiente -- reemplazar con la respuesta real.</div></div>
-    <div class="ic"><div class="il">COMO APLICAN LAS PROMOCIONES 2X1 Y 3X1?</div><div class="iv">Contenido pendiente -- reemplazar con la respuesta real.</div></div>
-    <div class="ic"><div class="il">QUE METODOS DE PAGO ACEPTAN?</div><div class="iv">Contenido pendiente -- reemplazar con la respuesta real.</div></div>
+    <div class="ic"><div class="il">HORARIO EN TIENDA</div><div class="iv">Lunes a viernes: 9:00 am - 6:30 pm</div><div class="is">Sabado: 10:00 am - 2:00 pm</div></div>
+    <div class="ic"><div class="il">ENTREGA LOCAL</div><div class="iv">Monterrey y Area Metropolitana</div><div class="is">Recoger en tienda o entrega a domicilio</div></div>
+    <div class="ic"><div class="il">PAGOS</div><div class="iv">Tarjeta, transferencia o efectivo</div><div class="is">Transferencia/efectivo: confirma tu pago por WhatsApp para procesar tu pedido</div></div>
+
+    <div class="socialrow">
+      <a class="sociallink social-wa" href="https://wa.me/528187057209" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.72.45 3.4 1.3 4.87L2 22l5.35-1.4a9.9 9.9 0 0 0 4.69 1.19h.01c5.46 0 9.9-4.45 9.9-9.9 0-2.65-1.03-5.13-2.9-7A9.82 9.82 0 0 0 12.04 2m0 1.8c2.16 0 4.2.84 5.73 2.38a8.1 8.1 0 0 1 2.38 5.73c0 4.47-3.64 8.1-8.11 8.1a8.1 8.1 0 0 1-4.13-1.13l-.3-.17-3.18.83.85-3.1-.19-.32a8.06 8.06 0 0 1-1.25-4.34c0-4.47 3.64-8.1 8.1-8.1M8.53 6.9c-.17 0-.44.06-.67.32-.23.25-.87.86-.87 2.09s.9 2.42 1.02 2.6c.13.16 1.75 2.8 4.32 3.82 2.14.85 2.57.68 3.04.64.47-.04 1.5-.6 1.72-1.19.21-.58.21-1.08.15-1.19-.06-.1-.23-.16-.48-.29-.25-.13-1.5-.74-1.73-.82-.23-.09-.4-.13-.57.13-.17.25-.65.82-.8.98-.15.17-.29.19-.55.06-.25-.13-1.05-.39-2-1.24-.74-.66-1.24-1.48-1.39-1.73-.15-.25-.02-.38.11-.51.11-.11.25-.29.38-.44.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.57-1.4-.79-1.91-.2-.5-.4-.43-.57-.44z"/></svg>
+        WhatsApp
+      </a>
+      <a class="sociallink social-fb" href="https://vapezonemty.com" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12"/></svg>
+        Facebook
+      </a>
+      <a class="sociallink social-ig" href="https://vzone.mx" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c-2.71 0-3.05.01-4.12.06-1.07.05-1.8.22-2.43.47a4.9 4.9 0 0 0-1.77 1.15A4.9 4.9 0 0 0 2.53 5.45c-.25.63-.42 1.36-.47 2.43C2.01 8.95 2 9.29 2 12s.01 3.05.06 4.12c.05 1.07.22 1.8.47 2.43a4.9 4.9 0 0 0 1.15 1.77 4.9 4.9 0 0 0 1.77 1.15c.63.25 1.36.42 2.43.47C8.95 21.99 9.29 22 12 22s3.05-.01 4.12-.06c1.07-.05 1.8-.22 2.43-.47a4.9 4.9 0 0 0 1.77-1.15 4.9 4.9 0 0 0 1.15-1.77c.25-.63.42-1.36.47-2.43.05-1.07.06-1.41.06-4.12s-.01-3.05-.06-4.12c-.05-1.07-.22-1.8-.47-2.43a4.9 4.9 0 0 0-1.15-1.77A4.9 4.9 0 0 0 18.55.53c-.63-.25-1.36-.42-2.43-.47C15.05.01 14.71 0 12 0m0 5.84A6.16 6.16 0 1 0 12 18.16 6.16 6.16 0 0 0 12 5.84m0 10.16a4 4 0 1 1 0-8 4 4 0 0 1 0 8m6.41-10.4a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0"/></svg>
+        Instagram
+      </a>
+    </div>
+
+    <div class="faqsection">
+      <button class="faqsecbtn" onclick="toggleFaqSection(this)">Pedidos y metodos de pago <span class="faqarrow">&#9660;</span></button>
+      <div class="faqsecbody">
+        <div class="faqpair"><div class="faqq">Como puedo realizar un pedido?</div><div class="faqa">Puedes realizar tu compra directamente desde nuestra pagina web. Solo agrega los productos a tu carrito, completa tus datos y elige tu metodo de pago preferido.</div></div>
+        <div class="faqpair"><div class="faqq">Que metodos de pago aceptan?</div><div class="faqa">Aceptamos tarjeta, transferencia bancaria y efectivo.<br><br>Si eliges transferencia o efectivo, es necesario que nos contactes por WhatsApp o con alguno de nuestros vendedores para confirmar tu pago y procesar tu pedido manualmente.</div></div>
+        <div class="faqpair"><div class="faqq">Pague por transferencia o quiero pagar en efectivo, que hago?</div><div class="faqa">Debes enviarnos un mensaje para confirmar tu pago para poder realizar tu pedido lo antes posible.</div></div>
+      </div>
+    </div>
+
+    <div class="faqsection">
+      <button class="faqsecbtn" onclick="toggleFaqSection(this)">Envios y entregas <span class="faqarrow">&#9660;</span></button>
+      <div class="faqsecbody">
+        <div class="faqpair"><div class="faqq">Cual es su horario de atencion en tienda fisica?</div><div class="faqa">Lunes a viernes de 9:00 am a 6:30 pm.<br>Sabado de 10:00 am a 2:00 pm.</div></div>
+        <div class="faqpair"><div class="faqq">Realizan entregas locales?</div><div class="faqa">Si, hacemos entregas locales dentro del area metropolitana de Monterrey. Puedes elegir entre pasar a recoger tu pedido o entrega por repartidor en tu domicilio o punto de encuentro.</div></div>
+        <div class="faqpair"><div class="faqq">Hacen envios nacionales?</div><div class="faqa">Si, contamos con envios nacionales por paqueteria.</div></div>
+        <div class="faqpair"><div class="faqq">Importante sobre envios nacionales</div><div class="faqa">El cliente es responsable de decidir si desea enviar el producto por paqueteria. Algunas paqueterias pueden retener paquetes que contengan vapes, y en esos casos no podemos intervenir ni hacernos responsables por retenciones o devoluciones. Al realizar tu compra con envio nacional, aceptas este riesgo.</div></div>
+      </div>
+    </div>
+
+    <div class="faqsection">
+      <button class="faqsecbtn" onclick="toggleFaqSection(this)">Atencion al cliente <span class="faqarrow">&#9660;</span></button>
+      <div class="faqsecbody">
+        <div class="faqpair"><div class="faqq">Como puedo contactar a un vendedor?</div><div class="faqa">Puedes comunicarte con nosotros a traves de nuestro WhatsApp oficial o mediante mensaje directo en la pagina, Facebook o Instagram. Te atenderemos en horario laboral.</div></div>
+        <div class="faqpair"><div class="faqq">Que hago si tengo un problema con mi pedido?</div><div class="faqa">Contactanos de inmediato por WhatsApp para apoyarte y revisar tu caso.<br><b>WhatsApp Soporte: +52 81 8705 7209</b></div></div>
+      </div>
+    </div>
+
     <br>
     <button class="bf bwf" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;border:none;background:var(--green);color:#fff;" onclick="openWapp(null)">&#128172; Abrir WhatsApp</button>
   </div>
@@ -1751,6 +1815,16 @@ function downloadOrderImage(){
   }catch(e){}
 }
 
+function toggleFaq(btn){
+  btn.classList.toggle('open');
+  var body = btn.nextElementSibling;
+  body.classList.toggle('open');
+}
+function toggleFaqSection(btn){
+  btn.classList.toggle('open');
+  var body = btn.nextElementSibling;
+  body.classList.toggle('open');
+}
 function openWapp(p){
   var flavorTxt = (p && p===cur && selectedFlavor) ? ' (sabor: '+selectedFlavor+')' : '';
   var msg=p?'Hola! Me interesa: '+p.name+flavorTxt+' ($'+p.price.toFixed(0)+'). Esta disponible?':'Hola! Tengo una pregunta sobre sus productos.';
@@ -1773,80 +1847,10 @@ function closeContact(){
   document.getElementById('kv').style.display='none';
   setNavActive('nh');
 }
-// Direccion de origen (tienda) para calcular kilometros de recorrido en auto/moto.
-const ORIGEN_ENVIO = 'Av. Simon Bolivar 1840, Monterrey, Nuevo Leon, CP 64460, Mexico';
-
-// Tabla de tarifas por rango de kilometros (recorrido, no linea recta).
-// Fuente: TARIFAS_DE_ENVIOS_VAPEZONE.xlsx
-const TARIFAS_ENVIO = [
-  {min:0,  max:2.9,  costo:40},
-  {min:3,  max:3.9,  costo:50},
-  {min:4,  max:4.9,  costo:60},
-  {min:5,  max:5.9,  costo:70},
-  {min:6,  max:6.9,  costo:80},
-  {min:7,  max:7.9,  costo:90},
-  {min:8,  max:8.9,  costo:100},
-  {min:9,  max:9.9,  costo:110},
-  {min:10, max:10.9, costo:120},
-  {min:11, max:11.9, costo:130},
-  {min:12, max:12.9, costo:140},
-  {min:13, max:13.9, costo:150},
-  {min:14, max:14.9, costo:160},
-  {min:15, max:15.9, costo:170},
-  {min:16, max:16.9, costo:180},
-  {min:17, max:17.9, costo:190},
-  {min:18, max:18.9, costo:200},
-  {min:19, max:19.9, costo:210},
-  {min:20, max:20.9, costo:220},
-  {min:21, max:21.9, costo:230},
-  {min:22, max:22.9, costo:240},
-  {min:23, max:23.9, costo:250},
-  {min:24, max:24.9, costo:260},
-  {min:25, max:25.9, costo:270},
-  {min:26, max:26.9, costo:280},
-  {min:27, max:27.9, costo:290},
-  {min:28, max:28.9, costo:300},
-  {min:29, max:29.9, costo:310},
-  {min:30, max:30.9, costo:320}
-];
-
-function tarifaPorKm(km){
-  for(var i=0;i<TARIFAS_ENVIO.length;i++){
-    if(km >= TARIFAS_ENVIO[i].min && km <= TARIFAS_ENVIO[i].max) return TARIFAS_ENVIO[i].costo;
-  }
-  return null; // fuera de rango (>30.9km) -> paqueteria
-}
-
-// Convierte una direccion en coordenadas usando Nominatim (OpenStreetMap).
-async function geocodeDireccion(direccion){
-  var url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=mx&addressdetails=1&q=' + encodeURIComponent(direccion);
-  var resp;
-  try{
-    resp = await fetch(url, { headers: { 'Accept-Language': 'es-MX' } });
-  }catch(networkErr){
-    throw new Error('geocode-network: '+networkErr.message);
-  }
-  if(!resp.ok) throw new Error('geocode-fail: HTTP '+resp.status);
-  var data = await resp.json();
-  if(!data.length) throw new Error('sin-resultados para: '+direccion);
-  return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon), display: data[0].display_name };
-}
-
-// Obtiene la distancia de RECORRIDO (por calles, en auto) entre dos puntos usando OSRM.
-async function distanciaRecorrido(origen, destino){
-  var url = 'https://router.project-osrm.org/route/v1/driving/'+origen.lon+','+origen.lat+';'+destino.lon+','+destino.lat+'?overview=false';
-  var resp;
-  try{
-    resp = await fetch(url);
-  }catch(networkErr){
-    throw new Error('routing-network: '+networkErr.message);
-  }
-  if(!resp.ok) throw new Error('routing-fail: HTTP '+resp.status);
-  var data = await resp.json();
-  if(!data.routes || !data.routes.length) throw new Error('sin-ruta');
-  return data.routes[0].distance / 1000; // metros -> km
-}
-
+// El calculo de envio (incluyendo la ubicacion de la tienda) ahora vive
+// completo en una Edge Function de Supabase (calcular_envio). El navegador
+// del cliente nunca ve la direccion ni las coordenadas de la tienda, nomas
+// manda su propia direccion y recibe el costo/km ya calculados.
 async function calcularEnvio(){
   var calle = document.getElementById('ship-calc-calle').value.trim();
   var numero = document.getElementById('ship-calc-numero').value.trim();
@@ -1866,36 +1870,25 @@ async function calcularEnvio(){
   btn.textContent = 'Calculando...';
   resultBox.style.display = 'none';
 
-  var esNuevoLeon = /nuevo\s*le[oó]n|\bn\.?\s?l\.?\b/i.test(estado);
-
   try{
-    var direccionCompleta = calle+' '+numero+', '+colonia+', '+ciudad+', '+estado+', CP '+cp+', Mexico';
-    var origenPt = await geocodeDireccion(ORIGEN_ENVIO);
-    var destinoPt;
-    try{
-      destinoPt = await geocodeDireccion(direccionCompleta);
-    }catch(primerIntentoErr){
-      // Reintento simplificado: a veces Nominatim no reconoce la colonia
-      // pero si reconoce calle + numero + ciudad + CP.
-      console.warn('Geocoding con colonia fallo, reintentando simplificado:', primerIntentoErr.message);
-      var direccionSimple = calle+' '+numero+', '+ciudad+', '+estado+', CP '+cp+', Mexico';
-      destinoPt = await geocodeDireccion(direccionSimple);
-    }
-    var km = await distanciaRecorrido(origenPt, destinoPt);
-    var costo = (esNuevoLeon) ? tarifaPorKm(km) : null;
+    var { data, error } = await supabaseClient.functions.invoke('calcular_envio', {
+      body: { calle: calle, numero: numero, colonia: colonia, cp: cp, ciudad: ciudad, estado: estado }
+    });
+    if(error) throw error;
+    if(data && data.error) throw new Error(data.detalle || data.error);
 
-    if(costo !== null){
+    if(data.costo !== null && !data.fueraDeArea){
       resultBox.innerHTML =
         '<div class="ic" style="border-color:var(--green);">'+
           '<div class="il">COSTO DE ENVIO</div>'+
-          '<div class="iv" style="font-size:20px;font-weight:700;">$'+costo.toFixed(0)+' MXN</div>'+
-          '<div class="iv" style="font-size:12px;opacity:.7;margin-top:4px;">Distancia aproximada de recorrido: '+km.toFixed(1)+' km</div>'+
+          '<div class="iv" style="font-size:20px;font-weight:700;">$'+data.costo.toFixed(0)+' MXN</div>'+
+          '<div class="iv" style="font-size:12px;opacity:.7;margin-top:4px;">Distancia aproximada de recorrido: '+data.km.toFixed(1)+' km</div>'+
         '</div>';
     } else {
       resultBox.innerHTML =
         '<div class="ic" style="border-color:#e0a552;">'+
           '<div class="il">ENVIO POR PAQUETERIA</div>'+
-          '<div class="iv">Tu direccion esta fuera del area de reparto propio ('+(esNuevoLeon ? km.toFixed(1)+' km' : 'fuera de Nuevo Leon')+'). '+
+          '<div class="iv">Tu direccion esta fuera del area de reparto propio. '+
           'Este envio se cotiza por paqueteria -- muy pronto agregamos esos precios aqui. Por ahora, escribenos por WhatsApp para cotizarlo.</div>'+
         '</div>';
     }
