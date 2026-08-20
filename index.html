@@ -986,6 +986,11 @@ function renderSubFilters(){
   box.style.gap='8px';
   var brands = [...new Set(P.filter(function(p){return p.category==='VAPES';}).map(function(p){return vapeBrand(p.name);}))].sort();
   var isBrandActive = subFilter && subFilter!=='PROMOS';
+  // Guardamos donde estaba el scroll horizontal de la fila de marcas ANTES de
+  // reconstruir el HTML, para poder dejarlo en el mismo lugar despues (si no,
+  // cada click reseteaba el scroll al principio de la lista).
+  var prevBrandsRow = document.getElementById('brandsRow');
+  var savedScroll = prevBrandsRow ? prevBrandsRow.scrollLeft : 0;
   var row1 = '<div class="cwrap" style="display:flex;gap:8px;overflow-x:auto;">'+
     '<button class="cbtn sub'+(subFilter===null?' on':'')+'" onclick="setSubFilter(null)">Todos los modelos</button>'+
     '<button class="cbtn sub'+((vapesMenu==='MARCAS'||isBrandActive)?' on':'')+'" onclick="toggleVapesMenu(\'MARCAS\')">Marcas '+(vapesMenu==='MARCAS'?'&#9650;':'&#9660;')+'</button>'+
@@ -993,12 +998,16 @@ function renderSubFilters(){
     '</div>';
   var row2 = '';
   if(vapesMenu==='MARCAS'){
-    row2 = '<div class="cwrap" style="display:flex;gap:8px;overflow-x:auto;">'+
+    row2 = '<div class="cwrap" id="brandsRow" style="display:flex;gap:8px;overflow-x:auto;">'+
       brands.map(function(b){
         return '<button class="cbtn sub'+(subFilter===b?' on':'')+'" onclick="setSubFilter(\''+b+'\')">'+b+'</button>';
       }).join('')+'</div>';
   }
   box.innerHTML = row1+row2;
+  if(vapesMenu==='MARCAS' && savedScroll){
+    var newBrandsRow = document.getElementById('brandsRow');
+    if(newBrandsRow) newBrandsRow.scrollLeft = savedScroll;
+  }
 }
 
 function toggleVapesMenu(v){
