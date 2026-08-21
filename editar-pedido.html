@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VapeZone - Editar pedido (uso interno)</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+  body{font-family:-apple-system,Arial,sans-serif;max-width:640px;margin:0 auto;padding:20px;background:#f7f7f8;color:#111;}
+  h1{font-size:18px;}
+  .card{background:#fff;border:1px solid #e2e2e5;border-radius:14px;padding:16px;margin-bottom:16px;}
+  input,select{width:100%;box-sizing:border-box;padding:10px;border:1px solid #d7d7db;border-radius:8px;font-size:14px;margin-bottom:8px;}
+  button{padding:10px 16px;border:none;border-radius:8px;background:#111;color:#fff;font-weight:700;cursor:pointer;font-size:14px;}
+  button.sec{background:#e2e2e5;color:#111;}
+  button.danger{background:#e05252;}
+  .row{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
+  .row input{margin-bottom:0;}
+  .row .c1{flex:2;} .row .c2{flex:1;} .row .c3{flex:1;}
+  .total{font-size:20px;font-weight:800;text-align:right;margin-top:10px;}
+  #imgResult img{max-width:100%;border:1px solid #e2e2e5;border-radius:8px;margin-top:10px;}
+  .hint{font-size:12px;color:#8b8b8f;margin-top:-4px;margin-bottom:10px;}
+  .msg{padding:10px;border-radius:8px;font-size:13px;margin-bottom:10px;}
+  .msg.err{background:#fdecec;color:#a12727;}
+  .msg.ok{background:#e6f7ec;color:#1a7a3d;}
+</style>
+</head>
+<body>
+<h1>Editar pedido (uso interno)</h1>
+<div class="hint">Esta pagina no es publica ni esta ligada al menu de la app. No compartas el link fuera del equipo.</div>
+
+<div class="card" id="pinCard">
+  <label>PIN de acceso</label>
+  <input type="password" id="pin" placeholder="PIN">
+  <button onclick="guardarPin()">Entrar</button>
+</div>
+
+<div class="card" id="buscarCard" style="display:none;">
+  <label>Numero de folio (ej. A00001)</label>
+  <div class="row">
+    <input type="text" id="folio" placeholder="A00001" style="flex:1;">
+    <button onclick="buscarPedido()">Buscar</button>
+  </div>
+  <div id="buscarMsg"></div>
+</div>
+
+<div class="card" id="pedidoCard" style="display:none;">
+  <div id="pedidoHeader"></div>
+  <div id="itemsBox"></div>
+  <button class="sec" onclick="agregarRenglon()">+ Agregar producto</button>
+  <div class="total" id="totalBox"></div>
+  <br>
+  <button onclick="guardarCambios()">Guardar cambios y generar imagen</button>
+  <div id="guardarMsg"></div>
+</div>
+
+<div class="card" id="imgCard" style="display:none;">
+  <div id="imgResult"></div>
+  <br>
+  <button onclick="descargarImagen()">Descargar imagen</button>
+  <button class="sec" onclick="abrirWhatsapp()">Abrir WhatsApp del cliente</button>
+</div>
+
+<script>
+const SUPABASE_URL = "https://zlfijynebemajtoijwrf.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpsZmlqeW5lYmVtYWp0b2lqd3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0NTgyMzUsImV4cCI6MjEwMjAzNDIzNX0.qhqNbi2NqA2SjZnQ--RnS5qTwxM_1ecEL_cyH7ihF-Y";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+var PIN = '';
+var pedidoActual = null; // datos del pedido tal como vinieron de Supabase
+var items = []; // lineas editables en memoria
+var imagenGenerada = null;
+
+function guardarPin(){
+  PIN = document.getElementById('pin').value.trim();
+  if(!PIN){ alert('Escribe el PIN'); return; }
+  document.getElementById('pinCard').style.display='none';
+  document.getElementById('buscarCard').style.display='block';
+}
+
+async function buscarPedido(){
+  var folio = document.getElementById('folio').value.trim().toUpperCase();
+  var msg = document.getElementById('buscarMsg');
+  msg.innerHTML = '<div class="msg">Buscando...</div>';
+  document.getElementById('pedidoCard').style.display='none';
+  document.getElementById('imgCard').style.display='none';
+  try{
+    var { data, error } = await supabaseClient.rpc('obtener_pedido_staff', { p_folio: folio, p_pin: PIN });
+    if(error) throw error;
+    if(!data || !data.ok){
+      msg.innerHTML = '<div class="msg err">'+(data && data.error==='pin-incorrecto' ? 'PIN incorrecto.' : 'No se encontro ese folio.')+'</div>';
+      return;
+    }
+    pedidoActual = data;
+    items = data.items.map(function(it){ return Object.assign({}, it); });
+    msg.innerHTML = '';
+    renderPedido();
+  }catch(err){
+    console.warn(err);
+    msg.innerHTML = '<div class="msg err">Error buscando el pedido.</div>';
+  }
+}
+
+function renderPedido(){
+  document.getElementById('pedidoCard').style.display='block';
+  document.getElementById('pedidoHeader').innerHTML =
+    '<b>Folio:</b> '+pedidoActual.folio+'<br>'+
+    '<b>Cliente:</b> '+pedidoActual.cliente+' ('+pedidoActual.telefono+')<br>'+
+    '<b>Vendedor:</b> '+pedidoActual.vendedor+'<br>'+
+    '<b>Estado actual:</b> '+pedidoActual.estado+'<br><br>';
+  renderItems();
+}
+
+function renderItems(){
+  var box = document.getElementById('itemsBox');
+  box.innerHTML = items.map(function(it, i){
+    return '<div class="row">'+
+      '<input class="c1" type="text" value="'+(it.producto||'')+'" onchange="items['+i+'].producto=this.value">'+
+      '<input class="c1" type="text" placeholder="Sabor" value="'+(it.sabor||'')+'" onchange="items['+i+'].sabor=this.value">'+
+      '<input class="c2" type="number" min="1" value="'+it.piezas+'" onchange="items['+i+'].piezas=parseInt(this.value)||1;calcularTotal();">'+
+      '<input class="c2" type="number" step="0.01" value="'+it.precioUnitario+'" onchange="items['+i+'].precioUnitario=parseFloat(this.value)||0;calcularTotal();">'+
+      '<button class="danger" onclick="quitarRenglon('+i+')">X</button>'+
+      '</div>';
+  }).join('');
+  calcularTotal();
+}
+
+function agregarRenglon(){
+  items.push({ producto:'', sabor:'', piezas:1, precioUnitario:0 });
+  renderItems();
+}
+function quitarRenglon(i){
+  items.splice(i,1);
+  renderItems();
+}
+function calcularTotal(){
+  var total = items.reduce(function(s,it){ return s + (it.piezas*it.precioUnitario); }, 0);
+  document.getElementById('totalBox').textContent = 'TOTAL: $'+total.toFixed(0);
+  return total;
+}
+
+async function guardarCambios(){
+  var msg = document.getElementById('guardarMsg');
+  msg.innerHTML = '<div class="msg">Guardando...</div>';
+  try{
+    var { data, error } = await supabaseClient.rpc('actualizar_pedido_staff', {
+      p_folio: pedidoActual.folio,
+      p_pin: PIN,
+      p_items: items.map(function(it){
+        return { producto: it.producto, sabor: it.sabor, piezas: it.piezas, precioUnitario: it.precioUnitario };
+      })
+    });
+    if(error) throw error;
+    if(!data || !data.ok){
+      msg.innerHTML = '<div class="msg err">No se pudo guardar.</div>';
+      return;
+    }
+    msg.innerHTML = '<div class="msg ok">Guardado. Nuevo total: $'+data.nuevoTotal.toFixed(0)+'</div>';
+    generarImagen(data.nuevoTotal);
+  }catch(err){
+    console.warn(err);
+    msg.innerHTML = '<div class="msg err">Error guardando los cambios.</div>';
+  }
+}
+
+function generarImagen(totalPedido){
+  var W = 900, padding = 40, lineH = 26;
+  var H = 300 + (items.length*lineH);
+  var canvas = document.createElement('canvas');
+  var scale = 2;
+  canvas.width = W*scale; canvas.height = H*scale;
+  var ctx = canvas.getContext('2d');
+  ctx.scale(scale,scale);
+  ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,W,H);
+
+  var x = padding, y = 50;
+  ctx.fillStyle = '#111111';
+  ctx.font = 'bold 26px -apple-system, Arial, sans-serif';
+  ctx.fillText('VAPEZONE MX', x, y);
+  ctx.font = '13px -apple-system, Arial, sans-serif';
+  ctx.fillStyle = '#e07a1f';
+  ctx.fillText('PEDIDO ACTUALIZADO', x, y+22);
+  y += 50;
+
+  ctx.strokeStyle = '#e6e6e8';
+  ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(W-padding,y); ctx.stroke();
+  y += 28;
+
+  ctx.fillStyle = '#111111';
+  ctx.font = 'bold 15px -apple-system, Arial, sans-serif';
+  ctx.fillText('Pedido: '+pedidoActual.folio, x, y);
+  ctx.font = '13px -apple-system, Arial, sans-serif';
+  y += 24;
+  ctx.fillText('Cliente: '+pedidoActual.cliente, x, y); y += 20;
+  ctx.fillText('Telefono: '+pedidoActual.telefono, x, y); y += 30;
+
+  var colPz = 500, colUnit = 650;
+  ctx.font = 'bold 11px -apple-system, Arial, sans-serif';
+  ctx.fillText('PRODUCTO', x, y);
+  ctx.fillText('PIEZAS', colPz, y);
+  ctx.fillText('P. UNIT', colUnit, y);
+  ctx.textAlign = 'right';
+  ctx.fillText('SUBTOTAL', W-padding, y);
+  ctx.textAlign = 'left';
+  y += 20;
+  ctx.strokeStyle = '#111111';
+  ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(W-padding,y); ctx.stroke();
+  y += 24;
+
+  ctx.font = '13px -apple-system, Arial, sans-serif';
+  items.forEach(function(it){
+    var nameLine = it.producto + (it.sabor ? ' - '+it.sabor : '');
+    if(nameLine.length>38) nameLine = nameLine.slice(0,38)+'...';
+    ctx.fillText(nameLine, x, y);
+    ctx.fillText(String(it.piezas), colPz, y);
+    ctx.fillText('$'+it.precioUnitario.toFixed(0), colUnit, y);
+    ctx.textAlign='right';
+    ctx.fillText('$'+(it.piezas*it.precioUnitario).toFixed(0), W-padding, y);
+    ctx.textAlign='left';
+    y += lineH;
+  });
+
+  ctx.strokeStyle = '#e6e6e8';
+  ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(W-padding,y); ctx.stroke();
+  y += 30;
+
+  ctx.font = 'bold 20px -apple-system, Arial, sans-serif';
+  ctx.textAlign='right';
+  ctx.fillText('NUEVO TOTAL: $'+totalPedido.toFixed(0), W-padding, y);
+  ctx.textAlign='left';
+
+  imagenGenerada = canvas.toDataURL('image/png');
+  document.getElementById('imgCard').style.display='block';
+  document.getElementById('imgResult').innerHTML = '<img src="'+imagenGenerada+'">';
+}
+
+function descargarImagen(){
+  if(!imagenGenerada) return;
+  var a = document.createElement('a');
+  a.href = imagenGenerada;
+  a.download = 'pedido-'+pedidoActual.folio+'-actualizado.png';
+  a.click();
+}
+
+function abrirWhatsapp(){
+  var tel = (pedidoActual.telefono||'').replace(/\D/g,'');
+  var msg = 'Hola! Hicimos un ajuste a tu pedido '+pedidoActual.folio+'. Te comparto la imagen actualizada con el nuevo total. Cualquier duda me avisas.';
+  window.open('https://wa.me/'+tel+'?text='+encodeURIComponent(msg));
+}
+</script>
+</body>
+</html>
