@@ -216,6 +216,19 @@ select.cname-input{appearance:none;-webkit-appearance:none;background-image:url(
 .social-wa{background:#dcf8e6;color:#1a8a4a;}
 .social-fb{background:#dce9fb;color:#1a5fb4;}
 .social-ig{background:linear-gradient(135deg,#fbe1c6,#f8d7e3);color:#a8367a;}
+.loycard{background:var(--surface2);border-radius:20px;padding:24px 20px;}
+.loyhead{text-align:center;margin-bottom:18px;}
+.loysub{font-size:12px;color:var(--text-secondary);margin-bottom:2px;}
+.loytitle{font-size:19px;font-weight:800;color:var(--text);}
+.loystamps{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px;}
+.loystamp{aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--text-secondary);}
+.loystamp.empty{background:var(--border);opacity:.5;}
+.loystamp.filled{background:#c9f0fb;}
+.loystamp.filled .loyvz{font-size:14px;font-weight:900;letter-spacing:.3px;color:#5a7a82;}
+.loystamp.filled .loyvz b{background:#7fa8b0;color:#fff;border-radius:4px;padding:0 3px;margin-right:1px;}
+.loyprogress{display:flex;justify-content:space-between;align-items:center;background:var(--text);color:var(--bg);border-radius:10px;padding:10px 14px;font-size:13px;font-weight:700;margin-bottom:14px;}
+.loyfoot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding-top:12px;font-size:14px;font-weight:700;color:var(--text);}
+.loyfoot span:last-child{font-size:12px;font-weight:600;color:var(--text-secondary);}
 .faqitem{border-bottom:1px solid var(--border);}
 .faqbtn{width:100%;text-align:left;background:none;border:none;padding:14px 4px;font-size:14px;font-weight:700;color:var(--text);display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;}
 .faqbtn .faqarrow{flex-shrink:0;font-size:12px;transition:transform .15s;color:var(--text-secondary);}
@@ -1998,13 +2011,33 @@ async function consultarLealtad(){
       box.innerHTML = '<div class="ic" style="border-color:#e0a552;"><div class="il">NO ENCONTRAMOS TU TARJETA</div><div class="iv">Verifica que sea el mismo numero con el que has hecho tus pedidos, o escribenos por WhatsApp.</div></div>';
       return;
     }
-    var nivelColor = data.nivel==='Oro' ? '#e0b23d' : data.nivel==='Plata' ? '#9aa3ab' : '#b5744a';
+    var sellos = data.sellos || 0;
+    // Tarjeta de 10 sellos tipo "junta 10 y llevate un regalo". Si ya paso
+    // de 10, se toma el sobrante como el avance de la tarjeta actual.
+    var enCiclo = sellos % 10;
+    if(enCiclo===0 && sellos>0) enCiclo = 10;
+    var primerNombre = (data.nombre||'Cliente').trim().split(' ')[0];
+    var idCorto = phone.slice(-5);
+
+    var circles = '';
+    for(var i=1;i<=10;i++){
+      if(i<=enCiclo){
+        circles += '<div class="loystamp filled"><span class="loyvz"><b>V</b>Z</span></div>';
+      } else {
+        circles += '<div class="loystamp empty">'+i+'</div>';
+      }
+    }
+
     box.innerHTML =
-      '<div class="ic" style="border:2px solid '+nivelColor+';">'+
-        '<div class="il">HOLA, '+(data.nombre||'').split(' ')[0]+'</div>'+
-        '<div class="iv" style="font-size:20px;font-weight:800;color:'+nivelColor+';">Nivel '+data.nivel+'</div>'+
-        '<div class="iv" style="margin-top:8px;">Pedidos realizados: <b>'+data.pedidos+'</b></div>'+
-        '<div class="iv">Sellos de lealtad: <b>'+data.sellos+'</b></div>'+
+      '<div class="loycard">'+
+        '<div class="loyhead">'+
+          '<div style="font-size:20px;font-weight:900;margin-bottom:14px;"><span style="background:#111;color:#fff;padding:2px 8px;border-radius:4px;">VAPE</span><span style="color:var(--text);">ZONE</span></div>'+
+          '<div class="loysub">Tarjeta de lealtad</div>'+
+          '<div class="loytitle">Cliente frecuente</div>'+
+        '</div>'+
+        '<div class="loystamps">'+circles+'</div>'+
+        '<div class="loyprogress"><span>Compras para tu regalo</span><span>'+enCiclo+' / 10</span></div>'+
+        '<div class="loyfoot"><span>'+primerNombre+'</span><span>ID '+idCorto+'</span></div>'+
       '</div>';
   }catch(err){
     console.warn('Error consultando lealtad:', err);
