@@ -1995,6 +1995,13 @@ function closeLoyalty(){
   document.getElementById('lv').style.display='none';
   setNavActive('nh');
 }
+// Evita que texto escrito por un cliente (nombre, etc.) se interprete como
+// HTML/codigo al mostrarlo en pantalla -- lo deja como texto plano seguro.
+function escapeHtml(str){
+  var d = document.createElement('div');
+  d.textContent = String(str);
+  return d.innerHTML;
+}
 async function consultarLealtad(){
   var phoneRaw = document.getElementById('loyalty-phone').value.trim();
   var phone = phoneRaw.replace(/\D/g,''); // solo digitos, igual que se guarda al hacer pedidos
@@ -2016,7 +2023,7 @@ async function consultarLealtad(){
     // de 10, se toma el sobrante como el avance de la tarjeta actual.
     var enCiclo = sellos % 10;
     if(enCiclo===0 && sellos>0) enCiclo = 10;
-    var primerNombre = (data.nombre||'Cliente').trim().split(' ')[0];
+    var primerNombre = escapeHtml((data.nombre||'Cliente').trim().split(' ')[0]);
     var idCorto = phone.slice(-5);
 
     var circles = '';
