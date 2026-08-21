@@ -1321,9 +1321,24 @@ function setNavActive(id){
   if(id) document.getElementById(id).classList.add('on');
 }
 
+// Se reserva un folio consecutivo (A00001, A00002...) en cuanto se abre el
+// carrito, para que al momento de dar clic en "Hacer Pedido" ya lo tengamos
+// listo sin tener que esperar nada (necesario para que el guardado de la
+// imagen en Fotos en iPhone/Safari siga funcionando sin interrupciones).
+var reservedFolio = null;
+async function prereservarFolio(){
+  try{
+    var { data, error } = await supabaseClient.rpc('reservar_folio');
+    if(error) throw error;
+    reservedFolio = data;
+  }catch(err){
+    console.warn('No se pudo prereservar folio, se usara respaldo local:', err);
+  }
+}
 function openCart(){
   document.getElementById('cv').classList.add('open');
   renderCart();
+  prereservarFolio();
 }
 function closeCart(){
   document.getElementById('cv').classList.remove('open');
@@ -1749,7 +1764,12 @@ async function orderWapp(){
   });
 
   var tot = rows.reduce(function(s,r){return s+r.lineTotal;},0);
-  var numeroPedido = genOrderNumber();
+  // Usa el folio ya reservado (consecutivo, tipo A00001). Si por algun
+  // motivo no se alcanzo a reservar a tiempo, usa el formato viejo como
+  // respaldo para que el pedido nunca se detenga.
+  var numeroPedido = reservedFolio || genOrderNumber();
+  reservedFolio = null;
+  prereservarFolio(); // deja uno listo para el siguiente pedido
   var now = new Date();
   var fecha = now.toLocaleDateString('es-MX');
   var hora = now.toLocaleTimeString('es-MX');
