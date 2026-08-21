@@ -354,6 +354,7 @@ select.cname-input{appearance:none;-webkit-appearance:none;background-image:url(
   <button class="nbtn" id="nh" onclick="goHome()"><span class="ni nivz">VZ</span>Inicio</button>
   <button class="nbtn" id="nk" onclick="goContact()"><span class="ni niq">?</span>Informacion</button>
   <button class="nbtn" id="ns" onclick="goShipping()"><span class="ni">&#128666;</span>Calcula tu envio</button>
+  <button class="nbtn" id="nl" onclick="goLoyalty()"><span class="ni">&#127903;</span>Mi tarjeta</button>
   <button class="nbtn" id="nw" onclick="openWapp(null)"><img class="niwa" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFgAAABYCAYAAABxlTA0AAAc9ElEQVR42u2deZReVZnuf3vvc8431JxKCIEkkEBIIgkQZq6KjSCDA4r0ckDptpt2pm3s1tUO2N3i3FfFayugtLaNgi16rwOICigyE+bREEjMPCdVXw3fcIa93/vHOd+pqlRSVUklmNs3J2sXWayc6Tnvft7nHfYuJSLCwWO/HfogBAcBPgjwweMgwAcB/u96eAfyw8lufoJC5f9q+N8PAjwmmIIgIiiVwpZCpzIYh36OPjf7I6DU0JkHwqH+lDq4CSgK9M5s5SCyEVVXo+pqhC7GiSCAVpqyDijrEmVTItABo093MAzw/68AblrccFDjOGJ1uJEVyWrWxJvZqLbSK/0MqhqxtjgluGEU4aPxnaEsJbpo43AO4UhzGEcHc5hdmEHg+fm1LQ79J7LrlxTgnYFtxA2erT7P0vhJnmc921Uv1SDCeBrf+BhlUFqh0RjZ9bUsjkQsibMkViiFAdOSDl6m5nJKsIjF5WMo+sXcql9qAnlJAN4Z2A3VzdxRu5+H3TNs9ndgS5qiKVAQg0YhQjoQUCktqF17wIwCUs4WrXA4YpcQ2ggVwvSoi9P1Es5uPYOZ5UNecqD3O8BOHFqlwK6prednfXexVD1NtaVBMSgQ4IMDEZcCOtkXyn5qpUArIompRnVa6mVeznG8sfVsZrcclgOt97NS3W8AD7fa/miAm3t/ye3yEPWWhPagBeM01tl9AurYgCuM0iTaUo3rFKtFzpFTeeuU82kvtOPE7VdHuF8Adgg6e+D7epbyH/WfsqncS0ehAyMa6+J02is15LZkv6CbfmwRFAqtNKIdA2GVQ2tdvLN8Ia/qOn3UMx/QADcpoRY3+Pb2H3KneohCW5kCHs7ZYWT6J1KHovC0JiShWq1ybnI67512CSW/NILODkiArTiM0qwd3MAXe65nZfsGugqdiBUEB+IOmKBGo9BG0xtWmFM9nI93vZfZLYfn73DAAWzFYpTh8cpzfGHgOmqdMS2qhHUOhc5Z+UCLxX1tGJQ65T6ff2x7Lyd1HrtPQd4nADfBvX/HY3yudh3elIDA+akDSdkvg9ftJZWODpclz05M/qMZNJFOiCsRHy+/h1dOORmLw+wDhTFpgJtf+/4dj/LZ6rcpdBUxLtWjk/H8CgUqlVIWh8VixWUTXKFRGGUwaAwGBVkoLXthyIJBY7Wj1lfnU+X3pyDvA0ueFMBNp/B45Tk+2Xc1QVcJz2qssqNeYKxkTXO66jTLQ0RM3YWoRCi6Iu1Spk210C5ljPaw4oho0EudAWoMqhrOJPjGp6AKGNG4Ybq6+bHGBFkErVKQ40rIF9qv4ITORZN2fHsNcFOkrx3cwIe2fY64S+HvpeVqNGih6uq4RDjUTuE4fQxL/IXMLRzBdG8KLV4ZrcwQUCLUXUhPPMDaaAPLouU8ZZ9nhayl7ieUTQkfL7P6PXuWWCf4Fc2/HXIls8qHTUrC7RXAzYnYiEOuWH8Vq9u3UlZlEon36DGa2rQqDYiEk2UB55deyZKWRbQHraO09fCPp1CjOdLCi/WV3FF/iLuSR9nu9dDqtaD38MMblTq+OQMz+Prhn6TgF/Nw/CUBuMlNX153Pbd49zKl0E7sEtBqnJsNTUejTBpdhQ1OTBbyjrbXc1LbsXnaMSZBofAwEwpsrCQYZfLQd3tY4f/038kvwjtpFCLadCuxRJmZqjGfUUTwtUdP2Mfr41fy0dnv2Ws+3mOAm5x07/aH+MTg1+lqnUIiUcqvagKBlYCnDDWpU2oUeVf5Yt7c+WowGovDicNXXs7LPVGF9dFmNtvt9CYDxBKjMbSbElO9Dmb6h3FYMB1tdE5ddtg1Vgyu4prKTTzmL6fdtOCcIFrGC/5AwBhDX/8An2n/W86ccupe8fEeAdx0GoPhIJetv5JKewNfNG4npzbW4SlDvx1gQTSbj3W9nzmtsxCERGwOyub6Fu4ZfJil0XOstpuo6AFiHSIKnCJzmYLnFK1S5nAO5QRvPmeWTmFx6zGgU6CdCJ4yOGv59o4fcVP8G1oLJZig2lAoYmWZ1tfCt2Z+lpagNa+27BeAm1/wmrXf5wb1S6YWu7Bi87k/9qUUnjJUkgFeaU/gU4d8kHJQJpEEozwUsL66iRv7buNe+zC9Xh+eCSiqAqkYkxGRmKjmMwkxaXoyiH2O08fw1tbzOKP9RFCMuP4vd9zDV2rfIygZlFOZLldjhu2e9uht9PFOeS3vn3XpHlvxhAFOc6ia9dWN/PXmj6HbPZSbeEbB0x4VW+Wc+BT+6bAPYYwmkQRPeWAdN229hRvCW6kUBmn3WvBF5bp2LGtrOh+lFKKEmmtgY8dZ+mQun/IXTC9Oy4wADIa7dizlquo3KZR8cOPbsQJEK+izXH/Y55hVPjzLEk7MivUeSAcUcOP2nzFYrGdaM62pjTc0ij47yEnxAq6c8UH0MHB7Gj38/frP8/XkRpIWS5duRVkhdglWbKpnx7i2E8GKI3EWax0lKdIalPmdepj3bLmShyqPY5QBFIlYzuo+jY+U/5KBWhXQiGPc62unGCjWuHH7LZkfmbjb0hPlXq00G2qbuTO6nxbTQmyTCYGrBBpETG908c+HXI7v+VixeMpjbW0jH9jwLzzoPUuX34aOHYmLcGIndO1dDSsWay1ttNJfqPHR3i/zy213YTKbS8Tyuqln83b/tVSiAYwy414zcQllv8zvwgfZWNucpj0nOHf1RLkX4NYdv6XPq6WhsHNjDnGCOIcoIarHfKzrfXQXujLLNWysb+ZDGz/DmtJWOnSZyMZpUOAUygFO0us0LWmc++1879jFeNYQFH0+M3gNt22/K63xZXT3vumXcJydx4Cr5tJsrPsYp6n4A9y6/bcjMJk0wEKqWRtxgzvq91EOSjjnJmb1aHqjfi7yz+GUjsUkkqCVoR43+MSmr7C5uIM2KRHZOC+x12gwIFUi0qCl+YJ7GgjlfsNBuVDi85Vv8Xjf0xhlcOLwjMeHu9+FCtOqszgZ00lbZyn5Re6sP0AYh6nl7wuAXXbTx/qfZo3aQqCC9IEQnIxtRSEx0+MuLpv65ziyqgKKr236Hs+YlXSoMrGkAUWCZbBRZX40k9OTJXSHXYQuBX5PLXj4sM6iLVDQXLX9WnrD3jTIEcvCtqN5nf8K+uNBFGrc6wTKZw2beKLvmQlb8YSd3D39j2I9h9j0hrEb+uq75F4UA+Egby6dS1ehk8SlkdYDvU9wc3gHHaaN0MbgJJVSDcWn2z7Ed2Z9iauP+ARf6v4IKhqSY3vLySKpxi7isdbbyDVbb8jryQL8xZSLaIvLWGye49jttazgfOH3Aw9NuCqjx8v8G6UJk4hH4j9Q8AJisdjUrLBIliPYeUBIzDTXxRu6zkVIBX9iE67ruQmvqHHOptkBpRgM63y47TLOm3Ym4imscsxrn8NJehGDtppa127vNbERSUKbbuWW8B6e6X8eowxWEg4rz+BV/qn021RV2DzvMXokYvH9gEcbzxPHUaZOJgNwNgVWVteyzm3BU0EK7gh9PHooFIO2xun+8UwrdpGIRSvN3ZWlPC3LaaFAIhYEqlJnvhzJa6e+Cpv1KzQbId7cei4uTBVF88NNZiCK0LP8Z+VnIwLj8zteBbHKZeHuzrcIAR5r1WZW1tZOiCb0RJzFssEXqdNA2VQZjOTaXQwRiB1ntZ6KKMlDy59WbkdpjbVZ3xiKetLgtPJijNGQUYvJZNBpXcczV82k6sI0qNnd/SY4EpdQVkUerD/BmuoGPGUQhBNaF3IEM2hImHL+WNcRqKkqz9VemFBFZUIcvDxcAYYxObc5EAglYqrr4vjysWlGTBnW1TbyZLycsi5meYJ0SOI40p+1S2kYeAGvb3s19bAOqEnxcB70iKZPDXBXX8qjsSQUvIDjvXnUk0bWWTRG4OEE0YoX6n+cvEzTSoPA6mg9Rqtxo6ocYBcx15tJV7GTJHMejw08Sz+DaNEj9K0IaXfPLu7tcFzQ8We0S6o22AcAO5dKtKX1p9IqSja7TigvxFmXd3yOeb72WBmvH8JorBTBWPSgUERJxKZkO16QRTzjeU4FsY2ZW5yd1tTEgTI801iGM5LOgmEFS0HYEG/ZrY7+Xe99VHWdspQnLO7Hy6n4yufFeA39UT/thTYA5hRnEYhJ8xbDE0sy+nxPGbbFO4iSiMALcqz2iiL6k0H63CAKjZ1gCOusZZY3PfvCqdNaFa/L0pLJTtZkeHDwKXBDPcLNctQdW+/n85VvU/AKaZvVvrBgcWhRVGw/G8OtuaM71J9GmysTu2SEnxl9DYcRTcUNMpAM7j1FNL/cYFIjJMkFf3NaD41daGAHU0xHdgND4hK2Jf14mBEzwOEoqxKPJc/x7MALoFJPrtEkNuGr276DFHWaWtwH4A7lRxR1CdkWV/JnaTFlSirIjChrRtwFJbpsmoaEVJMa4+V+9NgqGBq2TiQRKquJNWtjQzeU/P+5rLyuRGhVpewGisjGxDYGNM6BdZINhzgITcR3t96cpZXT+pmnPU4rLaKROTi3D/8IjoSEqq3ldBQon4BUG6eNAkNvNOJsSZsIGoQ0ksa4Ace4FJFIQsLwzJlFJMER4YgQiRGJEEmyESOZ7h36VA6rLEKEEA8bCYmEtJoCt4V3c1/PwxiVldwVXD7jL5ltp9Mn/ehm80puWSMHo2aTy551d8PlaYBmpwUiOHZHRUPnIo4YSyjJPkj25LrQ5uBJZnlDQyEOXPb3xAk1CXPr8LWPlixxIzYdw/W0dRjPcNXGaxiIBrOEjGVqqZtvzPon2usBg1JLr5GBszO4DQlTxyhqGMC7z/EiQkF7+SyLiQklSkEeofV3nweZSK1iXICNTvvKnHK7DIlHRErZVEmwVOL+IT2rAzpUC9YKSjSIzlYVpcPiKKkCK9Vqrlr91dwjW7Es7JjPdbM+S2fNZzAZxMfL9Xgzy9aIG8yMp5E0Enpsfxrii85lncvGcEfnicn9BEDdNtKARoaVkCS3MIY/sIjgoSlofzIApy9Z1iWM80icwzmFkyagMprbmi+hhfWZ9LKpPOAIfwZRnh3LsnHDRuwSuvx2flK7nRvW/ChLB6YJ9CVdx3HDUV/j6GQmW8MdKJWu2wi0T29U4eLia/j5/G/zvVlf4A3emVBP6EkGSbKcSfMeklluIpYWiswoHJK/7fZ4B/2uihaDbVqpNNu2JPtv+p4JjsD6tGR+Zqwi6G4BVtk5bX4bJQlIJiCTXNOqlOLFxtoR15tfPAabaWAr6dTb+dzIJrQXO/jsjuu4c8u9eMpDJLXko9vm8sMF3+Cy8sU0ag0qyQCboq2cpBZz5ZF/R8EvcGLXcXztmH/mh3Ou5p2F12JCTezsTpYMoY2YqWYwrTg17/xZ2VjDoKuiRefO2zJk/W7Y+VYcnmjKQZHxOsLGpYg2v4VWU8ZKKtXGzJmKI5FUyD8fv0AjDvNS/CmtiykkHlkubnQuWdLznRVMKeCK9Z/jni0P4em0nmbF0hq08qmjr+CmI67mYv9cztGn89UjP0ng+Xno7XAs6DiGT8/7B26Y/QX8yJBImlptglm1DU4oL8gLrwBPDT6PVS4r6Y+diExcQodpo81vG7/YO1ZPgCAEXsB0080Ku46CLkwsUsJnXbyR5dUXOb5zEQ7HsW3zmefN4nm7hpIqjHqBNIcMFpuu3yha3r3uSj4VfZB3zroofzGlNCd0L+KE7kWjGveGOqgsiGJB23w6aGOD20ZBBXkXkGcVZ3e9PO/TECc8MfAHfBOQDFMXu5JgCohczHTTjT9OFDeuBTdD0zmFWcRJsgsPu+uhHAxKyO96H8iB8TyP17WfQzWqIQLOjvbIbliRUTmFKio+vvUrfHjZp9lW346nPYzSxBKTiM00raCU2qkXQaEUbKxvY0dSwcNgnQUHVVvjOHMUp3eciMNhlGHF4GqeipcREGTVbDemcojiiLnBrMmnK5vH4uIxEMu4iZC8sussRa/Ar/vuIU5iPO0hCG+Zfj4z3dQ0LThGlQJJH1w5RXuhlZsbt3Phsnfzg3U/IYxDfOXjZcnunBqykYiFzAlev+FGes1AzqsKRT2sc2nXm/CMR+LSRNStW++kQg3tFOJk7KQSIIllYfnoyWfTmqa/uP1llFyaJJ9ovF+iyB+ilfx++wNpS6hL6C518zfdb6MW1dBKTeg6iU3oMK1sNRU+uvlfufCZy7hh7c1sq29LV4Aqg1Y6H54yYB1fe/Hf+X7/L2j3WkhcghZFv61yolnIm2a8NpVq2mMwqvK/K7dTMmWsjJ9Ns2JpsSWObz12XAUxbmdPc4VllESc/8Q7WelvpiD+UGOzkjH7bGsu5CRzLD9a9A08Y1AoGlGd1zx9CRu8HgK8CfcX5K2urkGUNDhcTePk0hJOaz2OY1vmMcV0UpUqz1aX8+OeX7M0fIaOoDV3WkprquEgP577Dc6YegqRiwm0z3fX3MTHt1zNlGJnSiNjhL4KRYOIeeFMfnXS9/E9f++dXJPQrVgCL+C00vE8V19FyS9kKb2xe9EcjqLyeaHxR3rCXg7NlrHWbEgjm66pHp54Kd6JpYhP2S/QI1V+Xv8tPx38DUXxKRCQqIQ6IZ4f0BG05l3ugfbZ0tjGld3v44ypp5BIgq89dtR7uG7LD2gNCjgb4aQpT9Vu+oY19ajGqS3Hpw00zmK02TdV5fOm/hkqFpwkeUw+VhiJEwZdnaMKszmk2I0lk0P9z7LBbsYTM+HWq+FZPCdp6ccTRbsu0xV0UCgUcQWFCQI6gnbKZOlNJ/jKY1NjG28tn8+H574/Nw6F4ourrmEVW/HFx2bG4hzZe+08UhmpYjiv+6xx9e+EAW7Kn9O7T+ZoZlN3jbzrZmy1qAiTBqe2LEZrkzuUe/ofIVLRLpIze5rXTfkwcUn6LFm9MHGWJAtttdZsrm/josKruXrhpxEtWUurxy0bf8MN/T+jw28nskkO4oiYeNhQKGquwTF6DqdNPT6ruJvJA6xQqSrwC1zU9RoGoirKmLRXd6xSuRKMU5zWviTvrhTneLj/SXzj5cl7hUYpjVPp/MyDkGYU1byejDOG/RujNJFK2Fbbznva3sb1i/8ngVcgdik1/KF3OVes+TwFv4CzMaKGoNzd+yilqIZV3th1DkW/hJOJ9URPaEuZps58y+Fv4NqtNxIWI7SoMbm7ISHT1VRObD8u5S8Ma6vr+GO8hpZCC865NKcahygLrapMP3V8P6Csi+ksQZho+7JGoZUhUZZtYQ+HSjdfmPkvvOOIixEcsYsJdMC6wY1cuvyj1ExESdJGRHYfV+RGFuqYbtvJWw9/44TUwx4BrJXGimNW+0wu7jif66o30x105mHmrpxBzdZ5ebCE7lIXsST4yuO+yiOsiNbR5lppcQWOLhzJya0LeUXHqRzbdgxLK09wzaYf8KJdi/F8yqaIVnpobcfOqahsrwiLoyER1bhGp7Ty1+0X8/dH/A0z2w5PEzekGb2V/Wu49LkPsVZvoE2l8m24Ae1+UYymN+zh3Z1vYVbbYcPWa8i4RDzhTZFU5snfN/dd/OjRXxP7SdqVuBsejpKYM6YtGWpgUbB2YDNvKr2GC6adyaltS5jfPo/AH5I6CzqP4c9nvI5bNt3Ozdt/zZO1ZfToClY7tDLZIpdmIcCl+REHZSlwpD+TC7pexdunv5H5XWkQENs4i/48Htj8CO998eNs9XtoUSUiF+VWONYsaVpvR9zC5Uf81bA1f/thCUFzyexVz36VL+34DoeUp2SloJ0sXmvqjTq3vey7nDJ1Sd52n7gET3sjpFfk4jxIsC5JNzjKjtUDa3m88gxPV5extrGRStzHgIQU8Og0bUwtdLOgfBQntS1mcft8ioVS1usQo0iDDrGO//XHf+dLG6+FwKOgAiIVj9gWbLgV7iztPeWxLdzBJ7veyycWX5FjsN8WwYhAf9jHWUvfzvpgGwX8EWvQNIqQiNnuUO49+SeUC+URVh5ntBIon1E9WJl5Ri5CK5OHwyMXZ+zGPYsQuhhfe7nyuX/rI3x21bXcU19Ke7EtXZaAwyk3ahHCrgDWaBqEzG5M5+4zfky5UM6XK0x40c8eLUnKio+dxU4+f9Q/cPGyD1Js6x45xZSmHjc4oW0hpUKZyMUYpfOv3gS2Gg7wdP8yHqg8ygOVx6i5Gu845CLeMONcOoqdw2qCFit2aD80lZJVU0NrpfCVD0pRMAFYx73bH+A763/Mrf2/I/aFKaUOrLPEmRYfS12O4HkD9b4an1vwEVqLrWkrrN6zZVx7vDGdUWl/xAUzz+E9W9/Gtf03Mr00jdgm+VI5Zy2v6DwZBQRZWSVJEpb3rWBp3+PcW1nKE9XnWO3WUycmMCkt3L3mUY7acC3ndryS86acxZLORUwrT8tywrstulCLqizve5G7eh/itp7f82j9OWIvob3YQlF0SmNqYmsr1LA64tbB7fxt9zs4f9bZadS2B9SwVxQxgioQGlHE+Q9ewpNqGe2mnZhUU3qh5u4Tbqbslbiv8ij3Vx7hkb7HWBWup6L6Ucan6JUoKB+DyvOvSikaElJLanjOMENP46hgFnNKs5lZPIxuv4uiKiDi6LP9rA83s7qxjhX1NaxKNlJTIUWvSIsporJKyN4cnjJU7CCnuUXc9j9+QMEP9npfn71fDJ45rlWVVZz14NuotNQo6QIxMYELmGfmsCpax2a3BYyjaIoUdTFtPhGy0HR0K1ZTz4oSIokJXUTs4jSNOIwjJaNOT3sEOqCgfUwWfqc+Ye82ETDKUJcG3bUO7jz9h8ztOGJSK+4ntZ1B06M+uGkpFz75V9g2D188EhJCFxHoIOVcYagomtX7RCa20lKrYXtYqmEsKSpvHm0WUSe7NYdRmlglmH74xYnf5YxDT5lQQme/Adx0Qp4y/Hrdnbzlmfdj2ooE4o1aRKh2Zrq92R1ARvPvvjgkW3Ibqhj6Im5e9C3OPfIsrE0wZnL7p+6TLWWa+vZXa+/gkmcvJ2rVlCliXZLX9g7MI1vzrD1q0sAfUPzXon/jvCPPJrE2da6T/JD7ZOcfT6fllwtmv4afL/kPugZL9CZ9GONNamuZ/X6Iw9cevXE/U6ut3Hri9/YpuPvMgnfm5BW9K7j00Q/zkH2CrnI3yma51KyVdSIx/D5GcoTVpmv/NGhFT20HL/dO4oaTvs7cKUfuU3D3OcDDQa6HNf7xic/wzW03EbQUKKtiumkHzbKBvMRUMOQ4jfaouipJNeTyQy7liyd8ilKhNGmH9pIAPFzCAfx81a/42PNf5Hm3glK5jQJ+tppHXkKQVQasISahVq8wXx3Nvy74BBfOuWDUMx/wAA/V0NKpWKn18OU/XM83N32fiumhpdiOh4d1CW4/g6xRaO0RSUwj7KfLtvOBw9/FRxd+gI5SR9rwrfT/W5uDjqYMDShe6F3B15Zfz83bbmUH29CFMiVTRIvKC5SyT0DVaKVwCuq2jgvrTKGbSw55E3837zKOnnLUCDrbr3Pnpdqg2YnFZH1qq3pX84NVP+ZHW2/luWgFmAS8AkVTwIjJtakgu07OqF0QgEq7eRIsDRtC3ADnscifx9sPvZC3z7mYOZ1H5sBq9B5lxQ5ogIe4OW1abVpNI2pw35YH+fmGO7i750GWh38kUlUwgPFBeUMOUQ0XBGqkQnAJ2BicoUAr84LZvHrKy3n9Yedw5vTTKWRdkFZs3l/xkrnXP8Um+c2i5vB8b5LELKu8wOPbn+apvmd4pr6CbY0erGrytEC+iLu5+aJgnGF6MJVjW+dyfOfxnNh1HAu75uENq5QkmcVq9d98k/xdU4fLkyyjPkSSNuJJsnOTnaC1Rul0FanyzS65H9ivDuyAB3hUClSGfpWDVnrCGw+5YR9KN/n4APlVJepA/oV9e9K3dqAeB/TvMjqwf0vRS5jsOXgcBPggwAcBPngcBPhAPP4vRgu5/+sPK4IAAAAASUVORK5CYII=" alt="">WhatsApp</button>
 </nav>
 <div id="promoView" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:150;flex-direction:column;overflow-y:auto;padding-bottom:90px;">
@@ -382,6 +383,17 @@ select.cname-input{appearance:none;-webkit-appearance:none;background-image:url(
     </div>
     <button class="bf bwf" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;border:none;background:var(--green);color:#fff;margin-top:14px;" id="ship-calc-btn" onclick="solicitarCotizacionEnvio()">&#128172; Solicitar costo de envio</button>
     <div id="ship-calc-result" style="display:none;margin-top:16px;"></div>
+  </div>
+</div>
+<div id="lv" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:150;flex-direction:column;overflow-y:auto;padding-bottom:80px;">
+  <div class="khdr" style="padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;"><button class="bk" onclick="closeLoyalty()">&#8592;</button><span class="ctit">Mi tarjeta de lealtad</span></div>
+  <div class="kb" style="padding:20px;">
+    <div class="ic" style="margin-bottom:16px;"><div class="il">TARJETA DE LEALTAD</div><div class="iv">Escribe el numero de WhatsApp con el que has hecho tus pedidos para ver tus sellos acumulados.</div></div>
+    <div style="display:flex;gap:8px;">
+      <input id="loyalty-phone" class="cname-input" type="tel" inputmode="numeric" placeholder="Tu numero de WhatsApp" style="flex:1;">
+      <button class="bf bwf" style="padding:0 18px;border-radius:12px;border:none;background:var(--text);color:var(--bg);font-weight:700;cursor:pointer;" onclick="consultarLealtad()">Ver</button>
+    </div>
+    <div id="loyalty-result" style="margin-top:20px;"></div>
   </div>
 </div>
 <div id="mo" onclick="closeMo(event)">
@@ -1834,6 +1846,7 @@ function hideAllViews(){
   document.getElementById('sv').style.display='none';
   document.getElementById('promoView').style.display='none';
   document.getElementById('nuevosView').style.display='none';
+  document.getElementById('lv').style.display='none';
 }
 
 function goContact(){
@@ -1938,6 +1951,45 @@ function goShipping(){
 function closeShipping(){
   document.getElementById('sv').style.display='none';
   setNavActive('nh');
+}
+
+function goLoyalty(){
+  hideAllViews();
+  document.getElementById('lv').style.display='flex';
+  setNavActive('nl');
+}
+function closeLoyalty(){
+  document.getElementById('lv').style.display='none';
+  setNavActive('nh');
+}
+async function consultarLealtad(){
+  var phoneRaw = document.getElementById('loyalty-phone').value.trim();
+  var phone = phoneRaw.replace(/\D/g,''); // solo digitos, igual que se guarda al hacer pedidos
+  var box = document.getElementById('loyalty-result');
+  if(!phone){
+    toast('Escribe tu numero de WhatsApp');
+    return;
+  }
+  box.innerHTML = '<div class="ic"><div class="iv">Buscando tu tarjeta...</div></div>';
+  try{
+    var { data, error } = await supabaseClient.rpc('consultar_lealtad', { p_telefono: phone });
+    if(error) throw error;
+    if(!data || !data.ok){
+      box.innerHTML = '<div class="ic" style="border-color:#e0a552;"><div class="il">NO ENCONTRAMOS TU TARJETA</div><div class="iv">Verifica que sea el mismo numero con el que has hecho tus pedidos, o escribenos por WhatsApp.</div></div>';
+      return;
+    }
+    var nivelColor = data.nivel==='Oro' ? '#e0b23d' : data.nivel==='Plata' ? '#9aa3ab' : '#b5744a';
+    box.innerHTML =
+      '<div class="ic" style="border:2px solid '+nivelColor+';">'+
+        '<div class="il">HOLA, '+(data.nombre||'').split(' ')[0]+'</div>'+
+        '<div class="iv" style="font-size:20px;font-weight:800;color:'+nivelColor+';">Nivel '+data.nivel+'</div>'+
+        '<div class="iv" style="margin-top:8px;">Pedidos realizados: <b>'+data.pedidos+'</b></div>'+
+        '<div class="iv">Sellos de lealtad: <b>'+data.sellos+'</b></div>'+
+      '</div>';
+  }catch(err){
+    console.warn('Error consultando lealtad:', err);
+    box.innerHTML = '<div class="ic" style="border-color:#e05252;"><div class="il">NO PUDIMOS CONSULTAR TU TARJETA</div><div class="iv">Intenta de nuevo o escribenos por WhatsApp.</div></div>';
+  }
 }
 
 const PROMO_BANNER_URL = "";   // URL de imagen para el banner de la pagina de Promociones -- pendiente
