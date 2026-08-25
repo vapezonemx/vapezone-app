@@ -1176,6 +1176,16 @@ function render(){
     return mc&&msub;
   });
   document.getElementById('rc').textContent=f.length+' producto'+(f.length!==1?'s':'')+' ('+P.length+' en catalogo completo)';
+  // Los modelos completos sin stock (agotado_manual) se mandan siempre al
+  // final de la lista, para que el cliente no crea que ya no hay mas
+  // productos disponibles al ver uno en gris a media pantalla y deje de
+  // hacer scroll. El orden entre disponibles, y entre agotados, se respeta
+  // igual que antes (orden de Supabase).
+  f = f.slice().sort(function(a,b){
+    var aOut = a.agotado_manual ? 1 : 0;
+    var bOut = b.agotado_manual ? 1 : 0;
+    return aOut - bOut;
+  });
   if(f.length===0){
     if(cat==='EN CAMINO' && !q){
       document.getElementById('grid').innerHTML='<div class="empty"><div class="ei">&#128230;</div><p>Muy pronto vas a encontrar aqui los proximos modelos que estamos por traer.</p></div>';
